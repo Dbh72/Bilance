@@ -23,7 +23,13 @@
         h1 {
             color: #2c3e50;
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 5px; /* Ridotto per avvicinare il nome */
+        }
+        .author { /* Stile per il nome dell'autore */
+            text-align: center;
+            font-size: 1.1em; /* Reso un po' più grande (era 0.9em) */
+            color: #555;
+            margin-bottom: 20px; /* Spazio dopo il nome */
         }
         h2 {
             color: #3498db;
@@ -48,7 +54,7 @@
             border-radius: 5px;
             margin-top: 15px;
         }
-        .nav-links { /* Nuovo stile per i link di navigazione */
+        .nav-links {
             margin-top: 20px;
             margin-bottom: 30px;
             padding: 15px;
@@ -56,7 +62,7 @@
             border-left: 5px solid #3498db;
         }
         .nav-links ul {
-            list-style-type: none; /* Rimuove i pallini della lista */
+            list-style-type: none;
             padding: 0;
             margin: 0;
         }
@@ -77,15 +83,17 @@
 <body>
     <div class="container">
         <h1>Benvenuti nella Pagina delle Bilance</h1>
-        <h1>Prof.ssa Deborah Di Muzio</h1>
+        <p class="author">Prof.ssa Deborah Di Muzio</p>
 
-        <p>Qui esploreremo i concetti fondamentali delle bilance, dividendoli in bilance algebriche e bilancia numerica. Queste pagine ti aiuteranno a comprendere meglio come funzionano e come applicarle in vari contesti.</p>
+        <p>Qui esploreremo i concetti fondamentali delle bilance, dividendoli in bilance algebriche e bilance numeriche. Queste pagine ti aiuteranno a comprendere meglio come funzionano e come applicarle in vari contesti.</p>
+
+        ---
 
         <div class="nav-links">
             <h3>Naviga tra le sezioni:</h3>
             <ul>
                 <li><a href="#bilance-algebriche">Vai alle Bilance Algebriche</a></li>
-                <li><a href="#bilancia-numerica">Vai alle Bilancia Numerica</a></li>
+                <li><a href="#bilancia-numerica">Vai alla Bilancia Numerica</a></li>
             </ul>
         </div>
 
@@ -112,7 +120,7 @@
         ---
 
         <h2 id="bilancia-numerica">Bilancia Numerica</h2>
-        <p>Le bilancia numerica, pur condividendo il principio dell'equilibrio, si concentrano sul confronto e la relazione tra i numeri stessi, spesso in contesti di disuguaglianze o rappresentazioni grafiche. Possono aiutare a visualizzare come i numeri si rapportano tra loro su una linea numerica o in un sistema di coordinate.</p>
+        <p>La bilancia numerica, pur condividendo il principio dell'equilibrio, si concentra sul confronto e la relazione tra i numeri stessi, spesso in contesti di disuguaglianze o rappresentazioni grafiche. Può aiutare a visualizzare come i numeri si rapportano tra loro su una linea numerica o in un sistema di coordinate.</p>
 
         <h3>Concetti Fondamentali</h3>
         <div class="section-content">
@@ -123,8 +131,6 @@
             </ul>
             <p>Esempio pratico: Immagina una bilancia dove i numeri sono posizionati in base al loro valore. I numeri negativi sono su un lato e i positivi sull'altro, con lo zero al centro.</p>
         </div>
-
-        <p>Prof.ssa Deborah Di Muzio</p>
     </div>
 </body>
 </html>
