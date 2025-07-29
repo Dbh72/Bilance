@@ -18,7 +18,7 @@
             background: #fff;
             padding: 30px;
             border-radius: 8px;
-            box-shadow: 0 0 10px rgba.
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
         h1 {
             color: #2c3e50;
@@ -48,6 +48,30 @@
             border-radius: 5px;
             margin-top: 15px;
         }
+        .nav-links { /* Nuovo stile per i link di navigazione */
+            margin-top: 20px;
+            margin-bottom: 30px;
+            padding: 15px;
+            background-color: #eaf6fd;
+            border-left: 5px solid #3498db;
+        }
+        .nav-links ul {
+            list-style-type: none; /* Rimuove i pallini della lista */
+            padding: 0;
+            margin: 0;
+        }
+        .nav-links li {
+            margin-bottom: 8px;
+        }
+        .nav-links a {
+            text-decoration: none;
+            color: #2980b9;
+            font-weight: bold;
+        }
+        .nav-links a:hover {
+            text-decoration: underline;
+            color: #1a527f;
+        }
     </style>
 </head>
 <body>
@@ -56,6 +80,14 @@
 
         <p>Qui esploreremo i concetti fondamentali delle bilance, dividendoli in bilance algebriche e bilance numeriche. Queste pagine ti aiuteranno a comprendere meglio come funzionano e come applicarle in vari contesti.</p>
 
+        <div class="nav-links">
+            <h3>Naviga tra le sezioni:</h3>
+            <ul>
+                <li><a href="#bilance-algebriche">Vai alle Bilance Algebriche</a></li>
+                <li><a href="#bilance-numeriche">Vai alle Bilance Numeriche</a></li>
+            </ul>
+        </div>
+
         ---
 
         <h2>Bilance</h2>
@@ -63,7 +95,7 @@
 
         ---
 
-        <h2>Bilance Algebriche</h2>
+        <h2 id="bilance-algebriche">Bilance Algebriche</h2>
         <p>Le bilance algebriche sono una rappresentazione visiva e concettuale delle equazioni. Immagina una bilancia a due bracci: ciò che metti su un lato deve essere bilanciato da ciò che metti sull'altro lato per mantenere l'equilibrio. Ogni operazione che compi su un lato dell'equazione (aggiungere, sottrarre, moltiplicare, dividere) deve essere eseguita anche sull'altro lato per mantenere l'uguaglianza.</p>
 
         <h3>Concetti Fondamentali</h3>
@@ -78,7 +110,7 @@
 
         ---
 
-        <h2>Bilance Numeriche</h2>
+        <h2 id="bilance-numeriche">Bilance Numeriche</h2>
         <p>Le bilance numeriche, pur condividendo il principio dell'equilibrio, si concentrano sul confronto e la relazione tra i numeri stessi, spesso in contesti di disuguaglianze o rappresentazioni grafiche. Possono aiutare a visualizzare come i numeri si rapportano tra loro su una linea numerica o in un sistema di coordinate.</p>
 
         <h3>Concetti Fondamentali</h3>
