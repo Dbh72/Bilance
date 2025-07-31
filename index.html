@@ -3,27 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Le Mie Bilance</title>
+    <title>Benvenuti nella Pagina delle Bilance</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
+        
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Inter', sans-serif;
             line-height: 1.6;
-            margin: 20px;
-            background-color: #f4f4f4;
-            color: #333;
+            margin: 0;
+            padding: 0; /* Rimosso il padding per eliminare lo spazio in alto */
+            background-color: #f0f8ff; /* Sfondo leggermente azzurrino, più chiaro e gradevole */
+            color: #343a40; /* Testo scuro */
         }
         .container {
             max-width: 900px;
             margin: auto;
-            background: #fff;
+            background: #ffffff;
             padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        h1, h2, h3 {
+            text-align: center;
         }
         h1 {
-            color: #2c3e50;
-            text-align: center;
+            color: #3f51b5; /* Blu più soft */
             margin-bottom: 5px;
+            font-size: 2.2em;
         }
         .author {
             text-align: center;
@@ -31,77 +37,91 @@
             color: #555;
             margin-bottom: 20px;
         }
+        /* Stile generale per i riquadri delle sezioni */
+        .section-box {
+            margin-top: 20px;
+            padding: 10px 15px; /* Ridotto il padding superiore e inferiore */
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+        .intro-box {
+            background-color: #c8e6c9; /* Verde pastello più vibrante */
+            margin-top: 0; /* Ridotto il margine superiore per sollevare il titolo */
+        }
+        .algebriche-box {
+            background-color: #d1eaff; /* Azzurro pastello */
+        }
+        .numerica-box {
+            background-color: #fff0db; /* Arancio pastello chiaro */
+        }
+        
         h2 {
-            color: #3498db;
-            border-bottom: 2px solid #eee;
-            padding-bottom: 10px;
-            margin-top: 40px; /* Mantiene la spaziatura tra le sezioni */
+            color: #2c3e50; /* Grigio-blu scuro */
+            border-bottom: none;
+            padding-bottom: 0;
+            margin-top: 5px; /* Spazio ridotto */
+            margin-bottom: 5px;
+            font-size: 1.8em;
         }
         h3 {
-            color: #2980b9;
-            margin-top: 20px;
+            color: #6c757d;
+            margin-top: 5px; /* Spazio ridotto */
+            margin-bottom: 5px;
+            font-size: 1.3em;
         }
         p {
+            margin-top: 0; /* Spazio eliminato */
             margin-bottom: 10px;
+            text-align: justify; /* Giustificazione del testo */
         }
-        ul {
-            list-style-type: disc;
-            margin-left: 20px;
-        }
-        .section-content {
-            background-color: #ecf0f1;
-            padding: 15px;
-            border-radius: 5px;
+        
+        /* Nuovo stile per i link di approfondimento, senza rettangolo */
+        .approfondisci-link {
+            display: block;
             margin-top: 15px;
-        }
-        .nav-links {
-            margin-top: 40px; /* Aumenta leggermente il margine superiore per separare meglio */
-            margin-bottom: 30px;
-            padding: 15px;
-            background-color: #eaf6fd;
-            border-left: 5px solid #3498db;
-        }
-        .nav-links ul {
-            list-style-type: none;
-            padding: 0;
-            margin: 0;
-        }
-        .nav-links li {
-            margin-bottom: 8px;
-        }
-        .nav-links a {
+            color: #3f51b5; /* Un colore blu più soft per i link */
             text-decoration: none;
-            color: #2980b9;
             font-weight: bold;
+            text-align: center;
+            transition: color 0.3s;
         }
-        .nav-links a:hover {
+        .approfondisci-link:hover {
+            color: #303f9f; /* Colore più scuro al passaggio del mouse */
             text-decoration: underline;
-            color: #1a527f;
         }
+        .approfondisci-link::after {
+            content: ' →'; /* Mantiene la freccetta a destra */
+        }
+
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Benvenuti nella Pagina delle Bilance</h1>
-        <p class="author">Prof.ssa Deborah Di Muzio</p>
+        <div class="intro-box section-box">
+            <h1>Benvenuti nella Pagina delle Bilance</h1>
+            <p class="author">Prof.ssa Deborah Di Muzio</p>
+            <p>Qui esploreremo i concetti fondamentali delle bilance. Questa pagina introduce brevemente le diverse tipologie.<br>
+            Clicca sui link per approfondire.</p>
+            <h2>Bilance</h2>
+            <p>Le bilance sono strumenti concettuali o fisici utilizzati per confrontare, misurare o rappresentare l'equilibrio tra due o più quantità.<br>
+            Nel contesto matematico ci aiutano a comprendere le relazioni tra numeri o a visualizzare e risolvere le equazioni.</p>
+        </div>
 
-        <p>Qui esploreremo i concetti fondamentali delle bilance. Questa pagina introduce brevemente le diverse tipologie. Clicca sui link per approfondire!</p>
+        <!-- Sezione Bilancia Numerica - Posizionata per prima come richiesto -->
+        <div class="section-box numerica-box">
+            <h2>Bilancia Numerica (Introduzione)</h2>
+            <p>La bilancia numerica, pur condividendo il principio dell'equilibrio, si concentra sul confronto e la relazione tra i numeri stessi, spesso in contesti di disuguaglianze o rappresentazioni grafiche.<br>
+            Può aiutare a visualizzare come i numeri si rapportano tra loro su una linea numerica o in un sistema di coordinate.</p>
+            <a href="paginabilancianumerica.html" class="approfondisci-link">Vai alla Bilancia Numerica (Approfondimento)</a>
+        </div>
 
-        <h2>Bilance</h2>
-        <p>Le bilance sono strumenti concettuali o fisici utilizzati per confrontare, misurare o rappresentare l'equilibrio tra due o più quantità. Nel contesto matematico, ci aiutano a visualizzare e risolvere equazioni o a comprendere le relazioni tra numeri.</p>
-
-        <h2>Bilance Algebriche (Introduzione)</h2>
-        <p>Le bilance algebriche sono una rappresentazione visiva e concettuale delle equazioni. Immagina una bilancia a due bracci: ciò che metti su un lato deve essere bilanciato da ciò che metti sull'altro lato per mantenere l'equilibrio. Ogni operazione che compi su un lato dell'equazione (aggiungere, sottrarre, moltiplicare, dividere) deve essere eseguita anche sull'altro lato per mantenere l'uguaglianza.</p>
-
-        <h2>Bilancia Numerica (Introduzione)</h2>
-        <p>La bilancia numerica, pur condividendo il principio dell'equilibrio, si concentra sul confronto e la relazione tra i numeri stessi, spesso in contesti di disuguaglianze o rappresentazioni grafiche. Può aiutare a visualizzare come i numeri si rapportano tra loro su una linea numerica o in un sistema di coordinate.</p>
-
-        <div class="nav-links">
-            <h3>Per approfondire, clicca qui:</h3>
-            <ul>
-                <li><a href="paginabilancealgebriche.html">Vai alle Bilance Algebriche (Approfondimento)</a></li>
-                <li><a href="paginabilancianumerica.html">Vai alla Bilancia Numerica (Approfondimento)</a></li>
-            </ul>
+        <!-- Sezione Bilance Algebriche - Posizionata per seconda -->
+        <div class="section-box algebriche-box">
+            <h2>Bilance Algebriche (Introduzione)</h2>
+            <p>Le bilance algebriche sono una rappresentazione visiva e concettuale delle equazioni.<br>
+            Immagina una bilancia a due bracci: ciò che metti su un lato deve essere bilanciato da ciò che metti sull'altro lato per mantenere l'equilibrio.<br>
+            Ogni operazione che compi su un lato dell'equazione (per esempio: aggiungere, sottrarre, moltiplicare, dividere) deve essere eseguita anche sull'altro lato per mantenere l'uguaglianza.</p>
+            <a href="paginabilancealgebriche.html" class="approfondisci-link">Vai alle Bilance Algebriche (Approfondimento)</a>
         </div>
     </div>
 </body>
