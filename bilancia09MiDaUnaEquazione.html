@@ -1,0 +1,1575 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bilancia Algebrica Interattiva</title>
+    <!-- Carica Tailwind CSS per lo stile -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Carica i moduli React e ReactDOM da CDN -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <!-- Carica Babel per compilare JSX nel browser -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <!-- Carica MathJax per il rendering LaTeX -->
+    <script type="text/javascript" id="MathJax-script" async
+        src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+    </script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        .font-inter {
+            font-family: 'Inter', sans-serif;
+        }
+        .balance-container {
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+            width: 100%;
+            max-width: 900px; /* Increased max-width */
+            height: 280px;
+            position: relative;
+            margin-bottom: 4rem;
+        }
+        .pivot-base {
+            width: 100px;
+            height: 30px;
+            background-color: #8B4513;
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 10px;
+            z-index: 0;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+        .pivot {
+            width: 40px;
+            height: 180px;
+            background-color: #A0522D;
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 0 0 20px 20px;
+            z-index: 1;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        .beam {
+            width: 100%;
+            height: 30px;
+            background-color: #694a2b;
+            position: absolute;
+            top: 55px;
+            left: 0;
+            right: 0;
+            margin: auto;
+            border-radius: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 5%;
+            box-shadow: inset 0 3px 6px rgba(0,0,0,0.2);
+            transition: transform 0.5s ease-in-out;
+            transform-origin: center 15px;
+            /* Use CSS variable for the base transform value */
+            transform: rotate(var(--current-tilt, 0deg));
+        }
+        /* Jiggle animation */
+        @keyframes jiggle {
+            0% { transform: rotate(var(--current-tilt, 0deg)); }
+            25% { transform: rotate(calc(var(--current-tilt, 0deg) + 1deg)); }
+            50% { transform: rotate(calc(var(--current-tilt, 0deg) - 1deg)); }
+            75% { transform: rotate(calc(var(--current-tilt, 0deg) + 0.5deg)); }
+            100% { transform: rotate(var(--current-tilt, 0deg)); }
+        }
+        .beam.jiggle-animation {
+            animation: jiggle 0.3s ease-out;
+        }
+
+        .plate-holder {
+            width: 280px; /* Increased width */
+            height: 180px;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+        }
+        .plate {
+            width: 260px; /* Increased width */
+            min-height: 120px;
+            background-color: #d2b48c;
+            border: 4px solid #8B4513;
+            border-radius: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 15px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+        }
+        .item-block {
+            /* Removed fixed width/height to allow content-based sizing */
+            min-width: 60px; /* Slightly larger min-width for items */
+            min-height: 50px; /* Minimum height */
+            max-width: 100%; /* Allow it to grow up to plate width */
+            flex-grow: 1; /* Allow it to grow if space available */
+            display: flex;
+            flex-direction: column; /* Allow content to stack */
+            justify-content: center;
+            align-items: center;
+            color: black; /* Changed from white to black */
+            font-weight: 700;
+            /* font-size: 1.5rem; Removed fixed font size */
+            border-radius: 8px;
+            margin: 5px;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+            position: relative; /* For absolute positioning of visual cues */
+            padding: 5px; /* Add some padding for content */
+            overflow: hidden; /* Hide overflow if text is too long */
+            word-break: break-word; /* Break long words */
+        }
+        .item-block.positive {
+            background-color: #2563EB; /* Changed from green to blue-600 */
+        }
+        .item-block.negative {
+            background-color: #F44336;
+        }
+        .item-block.variable {
+            background-color: #FFC107;
+        }
+        .control-section {
+            @apply bg-white p-6 rounded-xl shadow-lg mb-6 w-full max-w-md;
+        }
+        .control-section h3 {
+            @apply text-xl font-bold text-gray-700 mb-4;
+        }
+        .control-section input {
+            @apply p-2 border border-gray-300 rounded-md w-full mb-3 focus:ring-2 focus:ring-blue-400;
+        }
+        .control-section button {
+            @apply bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105;
+        }
+        .control-section button:disabled {
+            @apply bg-gray-400 cursor-not-allowed;
+        }
+
+        /* General styling for fraction display */
+        .flex-col .text-sm {
+            font-size: 0.9rem; /* Slightly smaller for fractions */
+        }
+        .flex-col .text-black { /* This class is now overridden by .item-block color: black */
+            white-space: nowrap; /* Prevent fraction parts from wrapping */
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        // --- Utility Functions for Fraction Arithmetic ---
+
+        // Greatest Common Divisor (GCD) using Euclidean algorithm
+        const gcd = (a, b) => {
+            a = Math.abs(a);
+            b = Math.abs(b);
+            while (b) {
+                [a, b] = [b, a % b];
+            }
+            return a;
+        };
+
+        // Simplify a fraction {numerator, denominator, sign}
+        const simplifyFraction = (fraction) => {
+            if (fraction.numerator === 0) {
+                return { numerator: 0, denominator: 1, sign: 1 };
+            }
+            const common = gcd(fraction.numerator, fraction.denominator);
+            return {
+                numerator: fraction.numerator / common,
+                denominator: fraction.denominator / common,
+                sign: fraction.sign // Keep the original sign
+            };
+        };
+
+        // Utility function to add two fractions
+        const addFractions = (f1, f2) => {
+            // Ensure fractions are in a consistent format (positive numerator/denominator, sign applied externally)
+            const n1 = f1.numerator * f1.sign;
+            const d1 = f1.denominator;
+            const n2 = f2.numerator * f2.sign;
+            const d2 = f2.denominator;
+
+            const num = (n1 * d2) + (n2 * d1);
+            const den = d1 * d2;
+
+            let sign = 1;
+            if (num < 0) { sign = -1; }
+            const simplified = simplifyFraction({ numerator: Math.abs(num), denominator: den, sign: sign });
+            return simplified;
+        };
+
+        // Utility function to divide two fractions
+        const divideFractions = (f1, f2) => {
+            if (f2.numerator === 0) {
+                // This case should ideally be handled before calling divideFractions for the solution.
+                // For now, return a special value or throw an error.
+                return { error: 'Division by zero in fraction division.' };
+            }
+            const n1 = f1.numerator * f1.sign;
+            const d1 = f1.denominator;
+            const n2 = f2.numerator * f2.sign;
+            const d2 = f2.denominator;
+
+            const num = n1 * d2;
+            const den = d1 * n2;
+
+            let sign = 1;
+            if (num < 0) { sign = -1; }
+            if (den < 0) { sign *= -1; } // Adjust sign if denominator is negative
+            const simplified = simplifyFraction({ numerator: Math.abs(num), denominator: Math.abs(den), sign: sign });
+            return simplified;
+        };
+
+        // Utility function to get a formatted string for a fractional value
+        const getFractionalDisplayString = (fraction) => {
+            if (fraction.denominator === 1) {
+                return String(fraction.numerator * fraction.sign);
+            }
+            // Return plain text format for fractions
+            return `${fraction.sign === -1 ? '-' : ''}${fraction.numerator}/${fraction.denominator}`;
+        };
+
+        // Utility function to parse numbers and fractions, returning fractional representation
+        // MOVED OUTSIDE OF APP COMPONENT FOR GLOBAL ACCESSIBILITY
+        const parseFractionOrNumber = i => {
+            let r = String(i).trim();
+            let oS = 1; // Original Sign
+            const oI = i.trim(); // Original Input
+
+            if (r === '' || r === '(' || r === ')' || r === '[' || r === ']' || r === '{' || r === '}') {
+                return {
+                    error: `Formato numerico non valido: "${i}".`
+                }
+            }
+
+            // Check for explicit leading sign
+            if (r.startsWith('-')) {
+                oS = -1;
+                r = r.substring(1).trim();
+            } else if (r.startsWith('+')) {
+                r = r.substring(1).trim();
+            }
+
+            let b = 0; // Balance for parentheses
+            let tLS = []; // Trailing Slash Indices
+
+            for (let k = 0; k < r.length; k++) {
+                if (r[k] === '(') b++;
+                else if (r[k] === ')') b--;
+                else if (r[k] === '/' && b === 0) {
+                    tLS.push(k)
+                }
+            }
+
+            if (tLS.length > 1) {
+                return {
+                    error: `Formato frazionario ambiguo: "${i}". Utilizza le parentesi per chiarire (es. (1/2)/3 o 1/(2/3)).`
+                }
+            }
+
+            let mSI = tLS.length === 1 ? tLS[0] : -1; // Main Slash Index
+            let fFV; // Final Fractional Value
+            let fNV; // Final Numeric Value
+            let displayObject; // Object for display info
+
+            if (mSI !== -1) {
+                let numeratorString = r.substring(0, mSI).trim(); // Numerator String
+                let denominatorString = r.substring(mSI + 1).trim(); // Denominator String
+
+                // RECURSIVE CALLS for numerator and denominator parts
+                let parsedNumerator = parseFractionOrNumber(numeratorString);
+                if (parsedNumerator.error) return { error: parsedNumerator.error };
+
+                let parsedDenominator = parseFractionOrNumber(denominatorString);
+                if (parsedDenominator.error) return { error: parsedDenominator.error };
+
+                if (parsedDenominator.numericValue === 0) {
+                    return {
+                        error: 'Divisione per zero.'
+                    }
+                }
+
+                const combinedFraction = divideFractions(parsedNumerator.fractionalValue, parsedDenominator.fractionalValue);
+                if (combinedFraction.error) {
+                    return { error: combinedFraction.error }
+                }
+
+                fFV = simplifyFraction(combinedFraction);
+                fFV.sign *= oS;
+                fNV = (fFV.numerator / fFV.denominator) * fFV.sign;
+                displayObject = { type: 'fraction', ...fFV }; // Use simplified fraction for display
+            } else if (r.startsWith('(') && r.endsWith(')')) {
+                let iC = r.slice(1, -1).trim(); // Inner Content
+                if (iC === '') {
+                    return {
+                        error: `Contenuto vuoto all'interno delle parentesi: "${i}".`
+                    }
+                }
+                const pI = parseFractionOrNumber(iC); // Parsed Inner
+                if (pI.error) return {
+                    error: pI.error
+                };
+                fFV = pI.fractionalValue;
+                fFV.sign *= oS;
+                fNV = (fFV.numerator / fFV.denominator) * fFV.sign;
+                displayObject = pI.display; // Inherit display from inner content
+                if (displayObject.type === 'fraction') {
+                    displayObject.sign = fFV.sign; // Ensure sign is correct
+                } else {
+                    displayObject.value = fNV;
+                }
+            } else {
+                const sNR = /^(?:[-+]?\d+(?:\.\d*)?|\.\d+)$/; // Simple Number Regex, now allows leading sign
+                if (!r.match(sNR)) {
+                    return {
+                        error: `Formato numerico non valido: "${i}".`
+                    }
+                }
+                const nV = parseFloat(r); // Numeric Value
+                if (isNaN(nV)) {
+                    return {
+                        error: `Errore interno di parsing per "${i}".`
+                    }
+                }
+                let n = nV; // Numerator
+                let d = 1; // Denominator
+                if (nV % 1 !== 0) {
+                    const dP = (nV.toString().split('.')[1] || '').length; // Decimal Places
+                    d = Math.pow(10, dP);
+                    n = Math.round(nV * d)
+                }
+                fFV = simplifyFraction({
+                    numerator: Math.abs(n),
+                    denominator: d,
+                    sign: (n < 0 ? -1 : 1)
+                });
+                fFV.sign *= oS;
+                fNV = (fFV.numerator / fFV.denominator) * fFV.sign;
+                displayObject = { type: 'number', value: fNV };
+            }
+
+            let dS; // Display String
+            if (fFV.denominator === 1) {
+                dS = String(fFV.numerator * fFV.sign)
+            } else {
+                dS = getFractionalDisplayString(fFV)
+            }
+            if (fNV === 0 && Object.is(fNV, -0)) {
+                dS = "0"
+            }
+
+            return {
+                type: 'number',
+                fractionalValue: fFV,
+                numericValue: fNV,
+                displayString: dS,
+                originalInputString: oI,
+                display: displayObject
+            }
+        };
+
+        // New helper function to parse a single monomial string (e.g., "5x", "-3", "-(2/3)x", "(5)/4")
+        // MOVED OUTSIDE OF APP COMPONENT FOR GLOBAL ACCESSIBILITY
+        const parseMonomialString = (monomialString) => {
+            const fullOriginalInput = monomialString; // Store the original for display
+            let trimmedMonomial = monomialString.trim();
+            if (trimmedMonomial === '') {
+                throw new Error("Termine monomio vuoto.");
+            }
+
+            let effectiveSign = 1;
+
+            // Handle leading sign for the whole monomial
+            if (trimmedMonomial.startsWith('-')) {
+                effectiveSign = -1;
+                trimmedMonomial = trimmedMonomial.substring(1).trim();
+            } else if (trimmedMonomial.startsWith('+')) {
+                effectiveSign = 1;
+                trimmedMonomial = trimmedMonomial.substring(1).trim();
+            }
+
+            let coefficientString;
+            let hasX = false;
+
+            // Check if it ends with 'x' (case-insensitive)
+            const xMatch = trimmedMonomial.match(/^(.*)([xX])$/i);
+            if (xMatch) {
+                hasX = true;
+                coefficientString = xMatch[1].trim(); // Everything before 'x'
+                if (coefficientString === '') { // Case like "x" or "-x" (after sign removal)
+                    coefficientString = '1';
+                }
+            } else {
+                coefficientString = trimmedMonomial;
+            }
+
+            // --- AMBIGUITY CHECK FOR N/Mx ---
+            // If it's an X term and the coefficient string contains a '/'
+            // AND it's not already explicitly parenthesized (e.g., "(1/2)"),
+            // then it's ambiguous.
+            // This check is primarily for user input validation. Generated strings will be correct.
+            if (hasX && coefficientString.includes('/') && !(coefficientString.startsWith('(') && coefficientString.endsWith(')'))) {
+                throw new Error(`Ambiguità: Il termine '${fullOriginalInput}' contiene una moltiplicazione implicita ambigua come 'N/Mx'. Usa le parentesi per chiarire: '(N/M)*x' o 'N/(M*x)'.`);
+            }
+            // --- END AMBIGUITY CHECK ---
+
+
+            // Now, parse the coefficientString which might be a number, a simple fraction, or a parenthesized fraction
+            const parsedCoefficient = parseFractionOrNumber(coefficientString); // Now calls the globally accessible function
+
+            if (parsedCoefficient.error) {
+                throw new Error(`Formato coefficiente non valido per "${coefficientString}" (parte di "${fullOriginalInput}"): ${parsedCoefficient.error}`);
+            }
+
+            let finalFractionalValue = parsedCoefficient.fractionalValue;
+            finalFractionalValue.sign *= effectiveSign; // Apply the overall sign
+
+            const finalNumericValue = (finalFractionalValue.numerator / finalFractionalValue.denominator) * finalFractionalValue.sign;
+
+            return {
+                type: hasX ? 'variable' : 'number',
+                fractionalValue: finalFractionalValue,
+                numericValue: finalNumericValue,
+                originalInputString: fullOriginalInput, // Keep the original string for display
+                display: parsedCoefficient.display // Keep original display info if needed
+            };
+        };
+
+
+        // Component to render a number or fraction consistently
+        const ItemDisplay = ({ item }) => {
+            // Render the main value/coefficient
+            const renderMainValue = () => {
+                // Display the original input string directly
+                return (
+                    <span className="text-xl font-bold">
+                        {item.originalInputString}
+                    </span>
+                );
+            };
+
+            // Render the visual cue for operations
+            const renderVisualCue = () => {
+                if (!item.visualCue) return null;
+
+                // item.visualCue.operand is now the original input string
+                const operandDisplayString = item.visualCue.operand;
+
+                if (item.visualCue.type === 'divide') {
+                    return (
+                        <div className="flex flex-col items-center justify-center text-sm mt-1">
+                            <div className="w-full border-t border-black"></div>
+                            <span className="text-black">{operandDisplayString}</span> {/* Use the string directly */}
+                        </div>
+                    );
+                } else if (item.visualCue.type === 'multiply') {
+                    return (
+                        <span className="text-black text-sm mt-1">
+                            &middot;&nbsp;{operandDisplayString} {/* Use the string directly */}
+                        </span>
+                    );
+                }
+                return null;
+            };
+
+            return (
+                <div className="flex flex-col items-center justify-center h-full w-full">
+                    <div className="flex items-center justify-center">
+                        {renderMainValue()}
+                    </div>
+                    {renderVisualCue()}
+                </div>
+            );
+        };
+
+        // New component for rendering MathJax content
+        const MathJaxDisplay = ({ text }) => {
+            const ref = React.useRef(null);
+            
+            React.useEffect(() => {
+                if (ref.current && window.MathJax) {
+                    window.MathJax.typesetClear([ref.current]);
+                    ref.current.innerHTML = text;
+                    window.MathJax.typesetPromise([ref.current])
+                        .catch(err => console.error("Errore di typesetting MathJax:", err));
+                }
+            }, [text]);
+
+            return <div ref={ref} />;
+        };
+
+
+        // Function to generate a random integer or fraction string (can be zero)
+        const generateRandomCoefficient = () => {
+            const isFraction = Math.random() < 0.5; // 50% chance for a fraction
+            if (isFraction) {
+                let num = Math.floor(Math.random() * 21) - 10; // Numerator between -10 and 10
+                let den = Math.floor(Math.random() * 9) + 2; // Denominator between 2 and 10
+                const common = gcd(num, den);
+                num /= common;
+                den /= common;
+                if (den < 0) { // Ensure denominator is positive
+                    num = -num;
+                    den = -den;
+                }
+                // Return it wrapped in parentheses if it's a fraction.
+                // This is the raw string for the coefficient, which formatCoeffForDisplay will then use.
+                return `${num}/${den}`;
+            } else {
+                let num = Math.floor(Math.random() * 21) - 10; // Integer between -10 and 10
+                return String(num);
+            }
+        };
+
+        // Function to generate a random non-zero integer or fraction string
+        const generateRandomNonZeroCoefficient = () => {
+            let coeff;
+            do {
+                coeff = generateRandomCoefficient();
+                const parsed = parseFractionOrNumber(coeff); // Parse without removing outer parens here
+                if (parsed.error || Math.abs(parsed.numericValue) < 1e-9) { // Check for parsing errors or effective zero
+                    coeff = "0"; // Force retry
+                }
+            } while (coeff === "0");
+            return coeff;
+        };
+
+
+        // Main App component
+        const App = () => {
+            const { useState, useEffect, useRef, useCallback, useMemo } = React; // Destructure React hooks
+
+            // A zero item for display when plates are empty
+            const zeroItem = useMemo(() => ({ type: 'number', fractionalValue: { numerator: 0, denominator: 1, sign: 1 }, numericValue: 0, originalInputString: '0' }), []);
+
+            // State for items on the left side of the balance
+            const [leftItems, setLeftItems] = useState([]);
+            // State for items on the right side of the balance
+            const [rightItems, setRightItems] = useState([]);
+            // State to store history for undo functionality
+            const [history, setHistory] = useState([]);
+            // State to store any messages to the user (e.g., balance status)
+            const [message, setMessage] = useState('Benvenuto! Genera un\'equazione per iniziare.');
+            // State to store the solved equation message (to be displayed as overlay)
+            const [solvedMessage, setSolvedMessage] = useState(null);
+            // State for system messages (errors, warnings)
+            const [systemMessage, setSystemMessage] = useState(null);
+            // State for the value to be added/removed (for number blocks)
+            const [addNumberValue, setAddNumberValue] = useState('');
+            // State for the X term to be added manually (e.g., "2x", "-x")
+            const [addXTermValue, setAddXTermValue] = useState('');
+            // State for the value to be used in operations (add, subtract, multiply, divide)
+            const [opValue, setOpOpValue] = useState('');
+            // State for the term to be applied to both sides for addition/sottraction principle
+            const [applyPrincipleTerm, setApplyPrincipleTerm] = useState('');
+            // State for the item to be removed by specific value/term
+            const [removeItemInput, setRemoveItemInput] = useState('');
+            // State to control the tilt of the balance for visual feedback
+            const [tilt, setTilt] = useState(0); // -10 for left heavy, 10 for right heavy, 0 for balanced
+            // State for the equation input string (for reference only)
+            const [equationInput, setEquationInput] = useState('');
+            // State to track if MathJax has loaded
+            const [isMathJaxLoaded, setIsMathJaxLoaded] = useState(false);
+            // State to track the count for equation generation type
+            const [generationCount, setGenerationCount] = useState(0);
+
+            // Ref for the beam element to apply rotation
+            const beamRef = useRef(null);
+
+
+            // --- Helper Functions (Memoized for performance) ---
+
+            const fractionalToString = useCallback((frac) => {
+                return getFractionalDisplayString(frac);
+            }, []);
+
+            const getSummedComponents = useCallback((items) => {
+                let sumNumbersFractional = { numerator: 0, denominator: 1, sign: 1 };
+                let sumXFractional = { numerator: 0, denominator: 1, sign: 1 };
+
+                items.forEach(item => {
+                    if (!item || !item.fractionalValue || typeof item.fractionalValue.numerator === 'undefined' || typeof item.fractionalValue.denominator === 'undefined' || typeof item.fractionalValue.sign === 'undefined') {
+                        console.error("Elemento malformato trovato nel piatto, saltato:", item);
+                        return;
+                    }
+                    if (item.type === 'number') {
+                        sumNumbersFractional = addFractions(sumNumbersFractional, item.fractionalValue);
+                    } else if (item.type === 'variable') {
+                        sumXFractional = addFractions(sumXFractional, item.fractionalValue);
+                    }
+                });
+                return {
+                    sumNumbers: (sumNumbersFractional.numerator / sumNumbersFractional.denominator) * sumNumbersFractional.sign,
+                    sumX: (sumXFractional.numerator / sumXFractional.denominator) * sumXFractional.sign,
+                    sumNumbersFractional: sumNumbersFractional,
+                    sumXFractional: sumXFractional
+                };
+            }, []);
+
+            const processItemsForOperationResult = useCallback((currentItems) => {
+                let operationsAppliedLocally = false;
+                const updatedItems = currentItems.map(item => {
+                    if (item.visualCue) {
+                        let newFractionalValue = { ...item.fractionalValue };
+                        const operandFractional = item.visualCue.operandFractional;
+
+                        if (item.visualCue.type === 'multiply') {
+                            newFractionalValue = simplifyFraction({
+                                numerator: newFractionalValue.numerator * operandFractional.numerator,
+                                denominator: newFractionalValue.denominator * operandFractional.denominator,
+                                sign: newFractionalValue.sign * operandFractional.sign
+                            });
+                            operationsAppliedLocally = true;
+                        } else if (item.visualCue.type === 'divide') {
+                            if (operandFractional.numerator === 0) {
+                                setSystemMessage('Impossibile dividere per zero durante il calcolo del risultato!');
+                                return item;
+                            }
+                            const divisionResult = divideFractions(newFractionalValue, operandFractional);
+                            if (divisionResult.error) {
+                                setSystemMessage(divisionResult.error);
+                                return item;
+                            }
+                            newFractionalValue = divisionResult;
+                            operationsAppliedLocally = true;
+                        }
+
+                        const newNumericValue = (newFractionalValue.numerator / newFractionalValue.denominator) * newFractionalValue.sign;
+
+                        // Update originalInputString to reflect the new calculated value
+                        let newOriginalInputString;
+                        if (item.type === 'number') {
+                            newOriginalInputString = getFractionalDisplayString(newFractionalValue);
+                        } else { // type === 'variable'
+                            // Ensure proper formatting for x-terms after calculation
+                            if (newFractionalValue.denominator !== 1 || newNumericValue < 0) {
+                                newOriginalInputString = `(${getFractionalDisplayString(newFractionalValue)})x`;
+                            } else if (newNumericValue === 1) {
+                                newOriginalInputString = 'x';
+                            } else if (newNumericValue === -1) {
+                                newOriginalInputString = '-x';
+                            } else {
+                                newOriginalInputString = `${getFractionalDisplayString(newFractionalValue)}x`;
+                            }
+                        }
+                        
+                        return {
+                            ...item,
+                            fractionalValue: newFractionalValue,
+                            numericValue: newNumericValue,
+                            originalInputString: newOriginalInputString, // Update this
+                            visualCue: null
+                        };
+                    }
+                    return item;
+                });
+                return { updatedItems, operationsAppliedLocally };
+            }, [getFractionalDisplayString, simplifyFraction, divideFractions]);
+
+
+            const removeOppositePairs = useCallback((items) => {
+                const counts = {};
+                const newItems = [];
+
+                items.forEach(item => {
+                    const key = `${item.type}-${fractionalToString(item.fractionalValue)}`;
+                    counts[key] = (counts[key] || 0) + 1;
+                });
+
+                items.forEach(item => {
+                    const key = `${item.type}-${fractionalToString(item.fractionalValue)}`;
+                    const oppositeFractional = { ...item.fractionalValue, sign: -item.fractionalValue.sign };
+                    const oppositeKey = `${item.type}-${fractionalToString(oppositeFractional)}`;
+
+                    if (counts[key] > 0 && counts[oppositeKey] > 0) {
+                        counts[key]--;
+                        counts[oppositeKey]--;
+                    } else if (counts[key] > 0) {
+                        newItems.push(item);
+                        counts[key]--;
+                    }
+                });
+                return newItems;
+            }, [fractionalToString]);
+
+            const sumLikeTerms = useCallback((items) => {
+                let sumNumbersFractional = { numerator: 0, denominator: 1, sign: 1 };
+                let sumXFractional = { numerator: 0, denominator: 1, sign: 1 };
+
+                items.forEach(item => {
+                    if (!item || !item.fractionalValue || typeof item.fractionalValue.numerator === 'undefined' || typeof item.fractionalValue.denominator === 'undefined' || typeof item.fractionalValue.sign === 'undefined') {
+                        console.error("Elemento malformato trovato nel piatto durante la somma di termini simili, saltato:", item);
+                        return;
+                    }
+                    if (item.type === 'number') {
+                        sumNumbersFractional = addFractions(sumNumbersFractional, item.fractionalValue);
+                    } else if (item.type === 'variable') {
+                        sumXFractional = addFractions(sumXFractional, item.fractionalValue);
+                    }
+                });
+
+                const finalItems = [];
+                if (sumNumbersFractional.numerator !== 0) {
+                    const numericVal = (sumNumbersFractional.numerator / sumNumbersFractional.denominator) * sumNumbersFractional.sign;
+                    let originalInputStr = getFractionalDisplayString(sumNumbersFractional);
+                    finalItems.push({
+                        type: 'number',
+                        fractionalValue: sumNumbersFractional,
+                        numericValue: numericVal,
+                        originalInputString: originalInputStr,
+                    });
+                }
+                if (sumXFractional.numerator !== 0) {
+                    const numericVal = (sumXFractional.numerator / sumXFractional.denominator) * sumXFractional.sign;
+                    let originalInputStr;
+                    // Ensure proper formatting for x-terms after summing
+                    if (sumXFractional.denominator !== 1 || numericVal < 0) {
+                        originalInputStr = `(${getFractionalDisplayString(sumXFractional)})x`;
+                    } else if (numericVal === 1) {
+                        originalInputStr = 'x';
+                    } else if (numericVal === -1) {
+                        originalInputStr = '-x';
+                    } else {
+                        originalInputStr = `${getFractionalDisplayString(sumXFractional)}x`;
+                    }
+                    finalItems.push({
+                        type: 'variable',
+                        fractionalValue: sumXFractional,
+                        numericValue: numericVal,
+                        originalInputString: originalInputStr,
+                    });
+                }
+                return finalItems;
+            }, [getFractionalDisplayString]);
+
+
+            // --- Core Logic & Event Handlers ---
+
+            const saveState = useCallback(() => {
+                setHistory(prevHistory => [...prevHistory, { left: leftItems, right: rightItems }]);
+                setSolvedMessage(null); // Clear solved message on any action that modifies the balance
+                setSystemMessage(null); // Clear system message
+            }, [leftItems, rightItems]);
+
+            const undoLastAction = useCallback(() => {
+                if (history.length > 0) {
+                    const previousState = history[history.length - 1];
+                    setLeftItems(previousState.left);
+                    setRightItems(previousState.right);
+                    setHistory(prevHistory => prevHistory.slice(0, -1)); // Remove the last state
+                    setSystemMessage(null);
+                    setMessage('Ultima azione annullata.');
+                    setSolvedMessage(null); // Clear solved message on undo
+                } else {
+                    setSystemMessage('Nessuna azione da annullare.');
+                }
+            }, [history]);
+
+            const addItemToSide = useCallback((side, item) => {
+                saveState(); // Save current state before modification
+                if (side === 'left') {
+                    setLeftItems(prevItems => {
+                        const newItems = [...prevItems];
+                        // Remove any existing zeroItem if other items are being added
+                        const filteredItems = newItems.filter(i => !(i.type === 'number' && i.numericValue === 0 && newItems.length > 0));
+                        filteredItems.push(item);
+                        return filteredItems;
+                    });
+                } else {
+                    setRightItems(prevItems => {
+                        const newItems = [...prevItems];
+                        const filteredItems = newItems.filter(i => !(i.type === 'number' && i.numericValue === 0 && newItems.length > 0));
+                        filteredItems.push(item);
+                        return filteredItems;
+                    });
+                }
+                setSystemMessage(null);
+            }, [saveState]);
+
+            const handleAddNumber = useCallback((side) => {
+                const parsed = parseFractionOrNumber(addNumberValue);
+                if (parsed.error) {
+                    setSystemMessage(parsed.error + '. Controlla che i valori frazionari siano scritti correttamente.');
+                    return;
+                }
+                addItemToSide(side, { ...parsed, type: 'number' });
+                setMessage('Numero aggiunto con successo.');
+                setAddNumberValue('');
+            }, [addNumberValue, addItemToSide, setSystemMessage, setMessage, setAddNumberValue]);
+
+            const handleAddXTerm = useCallback((side) => {
+                let inputString = addXTermValue.trim();
+                if (inputString === '') {
+                    setSystemMessage('Per favor, inserisci un termine X (es. 2x, -x, (1/2)x, -(2/3)x).');
+                    return;
+                }
+                try {
+                    const itemToAdd = parseMonomialString(inputString);
+                    if (itemToAdd.type !== 'variable') {
+                        setSystemMessage('L\'input deve essere un termine X. Controlla il formato.');
+                        return;
+                    }
+                    addItemToSide(side, itemToAdd);
+                    setMessage('Termine X aggiunto con successo.');
+                    setAddXTermValue('');
+                } catch (error) {
+                    setSystemMessage(error.message);
+                }
+            }, [addXTermValue, addItemToSide, setSystemMessage, setMessage, setAddXTermValue]);
+
+            const handleRemoveItem = useCallback((side) => {
+                const itemString = removeItemInput.trim();
+                if (itemString === '') {
+                    setSystemMessage('Per favor, inserisci l\'elemento da rimuovere (es. 5, -3, 2x, -x, (1/2)x).');
+                    return;
+                }
+                try {
+                    const itemToMatch = parseMonomialString(itemString);
+                    saveState();
+                    let itemsToUpdate = side === 'left' ? [...leftItems] : [...rightItems];
+                    let removed = false;
+                    let newItems = [];
+
+                    for (let i = 0; i < itemsToUpdate.length; i++) {
+                        const item = itemsToUpdate[i];
+                        if (item.type === itemToMatch.type && fractionalToString(item.fractionalValue) === fractionalToString(itemToMatch.fractionalValue)) {
+                            newItems = [...itemsToUpdate.slice(0, i), ...itemsToUpdate.slice(i + 1)];
+                            removed = true;
+                            break;
+                        }
+                    }
+
+                    if (removed) {
+                        if (side === 'left') {
+                            setLeftItems(newItems.length === 0 ? [] : newItems); // Revert to empty array
+                        } else {
+                            setRightItems(newItems.length === 0 ? [] : newItems); // Revert to empty array
+                        }
+                        setSystemMessage(null);
+                        setMessage(`Elemento "${itemString}" rimosso dal lato ${side === 'left' ? 'sinistro' : 'destro'}.`);
+                    } else {
+                        setSystemMessage(`Elemento "${itemString}" non trovato sul lato ${side === 'left' ? 'sinistro' : 'destro'}.`);
+                    }
+                    setRemoveItemInput('');
+                } catch (error) {
+                    setSystemMessage(error.message);
+                }
+            }, [removeItemInput, leftItems, rightItems, saveState, fractionalToString, setLeftItems, setRightItems, setSystemMessage, setMessage, setRemoveItemInput]);
+
+            // Modified applyOperation to only set the visual cue
+            const applyOperation = useCallback((operationType) => {
+                const opString = opValue.trim();
+                let operandFractionalValue;
+
+                const parsedOp = parseFractionOrNumber(opString);
+                if (parsedOp.error) {
+                    setSystemMessage(parsedOp.error + '. Controlla che i valori frazionari siano scritti correttamente.');
+                    return;
+                }
+                operandFractionalValue = parsedOp.fractionalValue;
+                const visualOperandDisplay = parsedOp.originalInputString; // Use original string for visual cue
+
+
+                if (operationType === 'divide' && operandFractionalValue.numerator === 0) {
+                    setSystemMessage('Non puoi dividere per zero!');
+                    return;
+                }
+
+                saveState(); // Save state *before* applying the visual cue
+
+                const updateItemsWithVisualCue = (currentItems) => {
+                    return currentItems.map(item => {
+                        let newVisualCue = null;
+                        if (operationType === 'multiply') {
+                            newVisualCue = { type: 'multiply', operand: visualOperandDisplay, operandFractional: operandFractionalValue };
+                        } else if (operationType === 'divide') {
+                            newVisualCue = { type: 'divide', operand: visualOperandDisplay, operandFractional: operandFractionalValue };
+                        }
+                        return {
+                            ...item,
+                            visualCue: newVisualCue
+                        };
+                    });
+                };
+
+                setLeftItems(prevItems => updateItemsWithVisualCue(prevItems));
+                setRightItems(prevItems => updateItemsWithVisualCue(prevItems));
+
+                setSystemMessage(null);
+                setMessage(`Operazione di ${operationType} per ${opString} applicata ad entrambi i lati (visualizzato). Clicca "Calcola Moltiplicazione/Divisione" per applicare il risultato.`);
+                setOpOpValue('');
+            }, [opValue, saveState, setSystemMessage, setMessage, setOpOpValue, setLeftItems, setRightItems]);
+
+
+            const applyAdditionSubtractionPrinciple = useCallback(() => {
+                const termString = applyPrincipleTerm.trim();
+                if (termString === '') {
+                    setSystemMessage('Per favor, inserisci un termine (es. +5, -2x, (1/2)x, -(2/3)x).');
+                    return;
+                }
+                try {
+                    const itemToAdd = parseMonomialString(termString);
+                    saveState();
+
+                    const addWithProximity = (currentItems, newItem) => {
+                        const newItems = [...currentItems];
+                        // Filter out any zero item if other items exist
+                        const filteredItems = newItems.filter(i => !(i.type === 'number' && i.numericValue === 0 && newItems.length > 1));
+
+                        let inserted = false;
+                        for (let i = 0; i < filteredItems.length; i++) {
+                            const existingItem = filteredItems[i];
+                            // Check for opposite by type and value (approximate comparison for floats)
+                            if (existingItem.type === newItem.type && Math.abs(existingItem.numericValue + newItem.numericValue) < 1e-9) {
+                                filteredItems.splice(i + 1, 0, { ...newItem }); // Insert after the opposite
+                                inserted = true;
+                                break;
+                            }
+                        }
+                        if (!inserted) {
+                            filteredItems.push({ ...newItem }); // If no opposite, just add to end
+                        }
+                        return filteredItems;
+                    };
+
+                    setLeftItems(prevItems => {
+                        const newItems = addWithProximity(prevItems, itemToAdd);
+                        return newItems.length === 0 ? [] : newItems;
+                    });
+                    setRightItems(prevItems => {
+                        const newItems = addWithProximity(prevItems, itemToAdd);
+                        return newItems.length === 0 ? [] : newItems;
+                    });
+
+                    setSystemMessage(null);
+                    setMessage(`Aggiunto "${itemToAdd.originalInputString}" ad entrambi i lati.`);
+                    setApplyPrincipleTerm('');
+                } catch (error) {
+                    setSystemMessage(error.message);
+                }
+            }, [applyPrincipleTerm, saveState, setSystemMessage, setMessage, setApplyPrincipleTerm, setLeftItems, setRightItems]);
+
+            const handleRemoveOpposites = useCallback(() => {
+                saveState();
+                const newLeftItems = removeOppositePairs(leftItems);
+                const newRightItems = removeOppositePairs(rightItems);
+
+                setLeftItems(newLeftItems.length === 0 ? [] : newLeftItems);
+                setRightItems(newRightItems.length === 0 ? [] : newRightItems);
+
+                if (newLeftItems.length === leftItems.length && newRightItems.length === rightItems.length) {
+                    setSystemMessage('Nessuna coppia opposta trovata da eliminare.');
+                } else {
+                    setSystemMessage(null);
+                    setMessage('Coppie opposte eliminate da entrambi i lati!');
+                }
+            }, [leftItems, rightItems, saveState, removeOppositePairs, setLeftItems, setRightItems, setSystemMessage, setMessage]);
+
+            const handleSumLikeTerms = useCallback(() => {
+                saveState();
+                const newLeftItems = sumLikeTerms(leftItems);
+                const newRightItems = sumLikeTerms(rightItems);
+
+                // Check if any actual change occurred to avoid unnecessary messages/state updates
+                const leftChanged = JSON.stringify(newLeftItems.map(i => ({ val: fractionalToString(i.fractionalValue), type: i.type }))) !== JSON.stringify(leftItems.map(i => ({ val: fractionalToString(i.fractionalValue), type: i.type })));
+                const rightChanged = JSON.stringify(newRightItems.map(i => ({ val: fractionalToString(i.fractionalValue), type: i.type }))) !== JSON.stringify(rightItems.map(i => ({ val: fractionalToString(i.fractionalValue), type: i.type })));
+
+                if (!leftChanged && !rightChanged) {
+                    setSystemMessage('Nessun termine simile da sommare o già sommati.');
+                } else {
+                    setLeftItems(newLeftItems.length === 0 ? [] : newLeftItems);
+                    setRightItems(newRightItems.length === 0 ? [] : newRightItems);
+                    setSystemMessage(null);
+                    setMessage('Monomi simili sommati su entrambi i lati!');
+                }
+            }, [leftItems, rightItems, saveState, sumLikeTerms, fractionalToString, setLeftItems, setRightItems, setSystemMessage, setMessage]);
+
+            const calculateOperationResult = useCallback(() => {
+                saveState();
+
+                const { updatedItems: newLeftItems, operationsAppliedLocally: leftOpsApplied } = processItemsForOperationResult(leftItems);
+                const { updatedItems: newRightItems, operationsAppliedLocally: rightOpsApplied } = processItemsForOperationResult(rightItems);
+
+                setLeftItems(newLeftItems.length === 0 ? [] : newLeftItems);
+                setRightItems(newRightItems.length === 0 ? [] : newRightItems);
+
+                if (leftOpsApplied || rightOpsApplied) {
+                    setSystemMessage(null);
+                    setMessage('Risultato delle operazioni di moltiplicazione/divisione calcolato!');
+                } else {
+                    setSystemMessage('Nessuna operazione di moltiplicazione/divisione in sospeso da calcolare.');
+                }
+            }, [leftItems, rightItems, saveState, processItemsForOperationResult, setLeftItems, setRightItems, setSystemMessage, setMessage]);
+
+
+            const analyzeFinalEquation = useCallback(() => {
+                setSystemMessage(null);
+                // Clear solved message initially to ensure it only appears if analysis succeeds
+                setSolvedMessage(null); 
+
+                const leftComponents = getSummedComponents(leftItems);
+                const rightComponents = getSummedComponents(rightItems);
+
+                const combinedXFractional = addFractions(leftComponents.sumXFractional, {
+                    numerator: rightComponents.sumXFractional.numerator,
+                    denominator: rightComponents.sumXFractional.denominator,
+                    sign: -rightComponents.sumXFractional.sign
+                });
+                const combinedNumbersFractional = addFractions(rightComponents.sumNumbersFractional, {
+                    numerator: leftComponents.sumNumbersFractional.numerator,
+                    denominator: leftComponents.sumNumbersFractional.denominator,
+                    sign: -leftComponents.sumNumbersFractional.sign
+                });
+
+                const combinedX = (combinedXFractional.numerator / combinedXFractional.denominator) * combinedXFractional.sign;
+                const combinedNumbers = (combinedNumbersFractional.numerator / combinedNumbersFractional.denominator) * combinedNumbersFractional.sign;
+
+                const isCombinedXZero = Math.abs(combinedX) < 1e-9;
+                const isCombinedNumbersZero = Math.abs(combinedNumbers) < 1e-9;
+
+                let analysisType = null;
+                let solutionDisplay = null;
+
+                if (!isCombinedXZero) {
+                    const solutionFractional = divideFractions(combinedNumbersFractional, combinedXFractional);
+                    if (solutionFractional.error) {
+                        analysisType = 'error';
+                        solutionDisplay = solutionFractional.error;
+                        setSystemMessage(`Errore durante l'analisi dell'equazione: ${solutionDisplay}`);
+                    } else {
+                        const solutionValue = (solutionFractional.numerator / solutionFractional.denominator) * solutionFractional.sign;
+
+                        if (solutionFractional.denominator === 1) {
+                            solutionDisplay = solutionValue.toString();
+                        } else {
+                            solutionDisplay = `${solutionFractional.sign === -1 ? '-' : ''}${solutionFractional.numerator}/${solutionFractional.denominator}`;
+                        }
+                        analysisType = 'determined';
+                        setSystemMessage(null);
+                    }
+                } else if (isCombinedXZero && !isCombinedNumbersZero) {
+                    const displayNum = combinedNumbersFractional.denominator === 1 ?
+                                       combinedNumbersFractional.sign * combinedNumbersFractional.numerator :
+                                       `${combinedNumbersFractional.sign === -1 ? '-' : ''}${combinedNumbersFractional.numerator}/${combinedNumbersFractional.denominator}`;
+                    solutionDisplay = displayNum;
+                    analysisType = 'impossible';
+                    setSystemMessage(null);
+                } else if (isCombinedXZero && isCombinedNumbersZero) {
+                    analysisType = 'indeterminate';
+                    setSystemMessage(null);
+                } else {
+                    // This case should ideally not be reached if the above conditions cover all possibilities
+                    setSolvedMessage(null);
+                }
+
+                if (analysisType === 'determined') {
+                    setSolvedMessage(
+                        <p className="text-black">
+                            Equazione risolta!<br />X = {solutionDisplay}<br />Equazione determinata.
+                        </p>
+                    );
+                } else if (analysisType === 'impossible') {
+                    setSolvedMessage(
+                        <p className="text-black">
+                            Equazione Impossibile!<br />0 = {solutionDisplay}<br />(Numero = Numero Diverso)
+                        </p>
+                    );
+                } else if (analysisType === 'indeterminate') {
+                    setSolvedMessage(
+                        <p className="text-black">
+                            Equazione INDETERMINATA!<br />0 = 0<br />(Numero = Numero)
+                        </p>
+                    );
+                } else if (analysisType === 'error') {
+                    // Message already set by setSystemMessage above
+                    setSolvedMessage(null); // Ensure no solved message if there's an error
+                }
+            }, [leftItems, rightItems, getSummedComponents, setSolvedMessage, setSystemMessage]);
+
+            const generateNewEquation = useCallback(() => {
+                setGenerationCount(prevCount => prevCount + 1);
+                let eqString = "";
+                let a_coeff, b_coeff, c_coeff, d_coeff;
+
+                // Helper to format a coefficient string for display in the equation string
+                const formatCoeffForDisplay = (coeffString, isXTerm = false) => {
+                    const parsed = parseFractionOrNumber(coeffString);
+                    if (parsed.error) return coeffString; // Fallback
+
+                    let display = parsed.displayString; // e.g., "5", "-2", "1/2", "-3/4"
+
+                    if (isXTerm) {
+                        // Handle '1x' and '-1x' cases for cleaner display
+                        if (parsed.numericValue === 1) return 'x';
+                        if (parsed.numericValue === -1) return '-x';
+
+                        // If it's a fraction or a negative number, wrap the coefficient in parentheses
+                        if (parsed.fractionalValue.denominator !== 1 || parsed.numericValue < 0) {
+                            display = `(${display})`;
+                        }
+                        return `${display}x`;
+                    } else {
+                        // For constant terms, return with its sign.
+                        return display;
+                    }
+                };
+
+                // Helper to determine if a term needs a '+' prefix and format it
+                const getTermWithSign = (coeffString, isXTerm = false, isFirstTerm = false) => {
+                    const parsed = parseFractionOrNumber(coeffString);
+                    if (parsed.error) return coeffString; // Fallback
+
+                    const formatted = formatCoeffForDisplay(coeffString, isXTerm);
+
+                    if (parsed.numericValue >= 0 && !isFirstTerm) {
+                        return `+ ${formatted}`;
+                    } else if (parsed.numericValue < 0 && isXTerm && parsed.fractionalValue.denominator === 1) {
+                         // For negative integer x-terms, the sign is part of the formatted string, no extra space
+                        return formatted;
+                    } else {
+                        // For negative numbers or negative fractional x-terms, the sign is part of the formatted string
+                        return formatted;
+                    }
+                };
+
+
+                // Determine type of equation based on count
+                // Priority: Indeterminate > Impossible > Determined
+                if ((generationCount + 1) % 3 === 0) { // Indeterminate
+                    do {
+                        a_coeff = generateRandomNonZeroCoefficient(); // Ensure 'a' is non-zero for 'x' to be present
+                    } while (false); // Loop only once as generateRandomNonZeroCoefficient ensures non-zero
+                    c_coeff = a_coeff; // Indeterminate: ax + b = ax + b
+                    b_coeff = generateRandomCoefficient();
+                    d_coeff = b_coeff;
+
+                    eqString = `${getTermWithSign(a_coeff, true, true)} ${getTermWithSign(b_coeff, false)}`;
+                    eqString += ` = ${getTermWithSign(c_coeff, true, true)} ${getTermWithSign(d_coeff, false)}`;
+                    setMessage('Equazione Indeterminata generata. (Infinite soluzioni)');
+                } else if ((generationCount + 1) % 2 === 0) { // Impossible
+                    do {
+                        a_coeff = generateRandomNonZeroCoefficient(); // Ensure 'a' is non-zero for 'x' to be present
+                    } while (false);
+                    c_coeff = a_coeff; // Impossible: ax + b = ax + d (b != d)
+                    b_coeff = generateRandomCoefficient();
+                    d_coeff = generateRandomCoefficient();
+                    while (b_coeff === d_coeff) { // Ensure b != d
+                        d_coeff = generateRandomCoefficient();
+                    }
+                    eqString = `${getTermWithSign(a_coeff, true, true)} ${getTermWithSign(b_coeff, false)}`;
+                    eqString += ` = ${getTermWithSign(c_coeff, true, true)} ${getTermWithSign(d_coeff, false)}`;
+                    setMessage('Equazione Impossibile generata. (Nessuna soluzione)');
+                } else { // Determined
+                    do {
+                        a_coeff = generateRandomCoefficient();
+                        c_coeff = generateRandomCoefficient();
+                        const parsedA = parseFractionOrNumber(a_coeff);
+                        const parsedC = parseFractionOrNumber(c_coeff);
+                        // Ensure a != c AND at least one of a or c is non-zero
+                        if (Math.abs(parsedA.numericValue - parsedC.numericValue) > 1e-9 && (Math.abs(parsedA.numericValue) > 1e-9 || Math.abs(parsedC.numericValue) > 1e-9)) {
+                            break;
+                        }
+                    } while (true);
+                    b_coeff = generateRandomCoefficient();
+                    d_coeff = generateRandomCoefficient();
+                    
+                    eqString = `${getTermWithSign(a_coeff, true, true)} ${getTermWithSign(b_coeff, false)}`;
+                    eqString += ` = ${getTermWithSign(c_coeff, true, true)} ${getTermWithSign(d_coeff, false)}`;
+                    setMessage('Equazione Determinata generata. (Una soluzione)');
+                }
+
+                // Clean up leading '+' signs if any and double spaces
+                eqString = eqString.replace(/^\+\s*/, '').replace(/=\s*\+\s*/, '= ').replace(/\s{2,}/g, ' ').trim();
+
+                setEquationInput(eqString); // Trim any extra spaces
+                // Clear the plates to force manual entry for the new equation
+                setLeftItems([]);
+                setRightItems([]);
+                setHistory([]);
+                setSolvedMessage(null);
+                setTilt(0);
+                setSystemMessage(null);
+            }, [generationCount, setGenerationCount, setEquationInput, setMessage, setLeftItems, setRightItems, setHistory, setSolvedMessage, setTilt, setSystemMessage]);
+
+
+            const clearAll = useCallback(() => {
+                saveState();
+                setLeftItems([]);
+                setRightItems([]);
+                setAddNumberValue('');
+                setAddXTermValue('');
+                setOpOpValue('');
+                setApplyPrincipleTerm('');
+                setRemoveItemInput('');
+                setSystemMessage(null);
+                setSolvedMessage(null); // Clear solved message
+                setTilt(0);
+                setHistory([]); // Clear history when resetting completely
+                generateNewEquation(); // Generate a new equation
+            }, [saveState, setLeftItems, setRightItems, setAddNumberValue, setAddXTermValue, setOpOpValue, setApplyPrincipleTerm, setRemoveItemInput, setSystemMessage, setSolvedMessage, setTilt, setHistory, generateNewEquation]);
+
+
+            // --- Effect Hooks ---
+
+            // Initial generation on component mount
+            useEffect(() => {
+                generateNewEquation();
+            }, []); // Empty dependency array means it runs once on mount
+
+            // Effect to re-evaluate balance status whenever items change
+            useEffect(() => {
+                // Helper to get summed X and Number components for a given array of items
+                const getSummedComponentsLocal = (items) => {
+                    let sumNumbersFractional = { numerator: 0, denominator: 1, sign: 1 };
+                    let sumXFractional = { numerator: 0, denominator: 1, sign: 1 };
+
+                    items.forEach(item => {
+                        if (item.type === 'number') {
+                            sumNumbersFractional = addFractions(sumNumbersFractional, item.fractionalValue);
+                        } else if (item.type === 'variable') {
+                            sumXFractional = addFractions(sumXFractional, item.fractionalValue);
+                        }
+                    });
+                    return {
+                        sumNumbers: (sumNumbersFractional.numerator / sumNumbersFractional.denominator) * sumNumbersFractional.sign,
+                        sumX: (sumXFractional.numerator / sumXFractional.denominator) * sumXFractional.sign,
+                        sumNumbersFractional: sumNumbersFractional,
+                        sumXFractional: sumXFractional
+                    };
+                };
+
+                let newTilt;
+                let newMainMessage = ''; // This will store the message based on balance state
+
+                const leftComponents = getSummedComponentsLocal(leftItems);
+                const rightComponents = getSummedComponentsLocal(rightItems);
+
+                const leftTotalNumeric = leftComponents.sumNumbers + leftComponents.sumX;
+                const rightTotalNumeric = rightComponents.sumNumbers + rightComponents.sumX;
+
+                if (Math.abs(leftTotalNumeric - rightTotalNumeric) < 1e-9) {
+                    newMainMessage = 'Le espressioni sui piatti hanno lo stesso "peso" simbolico.';
+                    newTilt = 0;
+                } else if (leftTotalNumeric < rightTotalNumeric) {
+                    newMainMessage = 'Il lato sinistro ha un "peso" simbolico minore.';
+                    newTilt = -10;
+                } else {
+                    newMainMessage = 'Il lato destro ha un "peso" simbolico minore.';
+                    newTilt = 10;
+                }
+
+                // If plates are empty after operations, re-add zero item for display
+                if (leftItems.length === 0) {
+                    setLeftItems([zeroItem]);
+                }
+                if (rightItems.length === 0) {
+                    setRightItems([zeroItem]);
+                }
+                
+                // Only update the main message if there's no system message (error/warning)
+                // or if it's the initial load message.
+                // Otherwise, let the message set by generateNewEquation or other actions persist.
+                if (systemMessage === null) {
+                    // Only update if the current message is a generic one, not an equation type message
+                    // or if it's the very first load.
+                    if (message.includes('Benvenuto!') || message.includes('Bilancia azzerata!') || newMainMessage !== message) {
+                        setMessage(newMainMessage);
+                    }
+                }
+                
+                setTilt(newTilt);
+
+                if (beamRef.current) {
+                    beamRef.current.style.setProperty('--current-tilt', `${newTilt}deg`);
+
+                    const shouldJiggle = (Math.abs(newTilt) > 0); // Always jiggle if not balanced
+                    if (shouldJiggle) {
+                        beamRef.current.classList.add('jiggle-animation');
+                        const timer = setTimeout(() => {
+                            if (beamRef.current) {
+                                beamRef.current.classList.remove('jiggle-animation');
+                            }
+                        }, 300);
+                        return () => clearTimeout(timer);
+                    } else {
+                        beamRef.current.classList.remove('jiggle-animation');
+                    }
+                }
+            }, [leftItems, rightItems, systemMessage, setMessage, setTilt, zeroItem, message]);
+
+            // Effect to handle MathJax loading
+            useEffect(() => {
+                const checkMathJax = () => {
+                    if (window.MathJax && window.MathJax.startup && window.MathJax.startup.promise) {
+                        window.MathJax.startup.promise.then(() => {
+                            setIsMathJaxLoaded(true);
+                            window.MathJax.typesetPromise();
+                        }).catch(err => console.error("Errore di typesetting MathJax:", err));
+                    } else {
+                        setTimeout(checkMathJax, 100);
+                    }
+                };
+                checkMathJax();
+            }, []);
+
+
+            // --- Render Logic ---
+
+            // All controls are always enabled as the app is always in 'solving' mode
+            const areSolvingControlsEnabled = true;
+
+
+            return (
+                <div className="min-h-screen bg-gradient-to-br from-gray-200 to-gray-400 flex flex-col items-center justify-center p-4 font-inter">
+                    <h1 className="text-4xl font-extrabold text-gray-800 mb-4 text-center drop-shadow-md">
+                        Bilancia Algebrica Interattiva
+                    </h1>
+
+                    {/* Message Display (general status) */}
+                    <div className="text-xl font-semibold text-gray-700 mb-6 p-3 bg-white rounded-lg shadow-md">
+                        <MathJaxDisplay text={message} />
+                    </div>
+
+                    {/* System Message Display (for errors/critical feedback) */}
+                    {systemMessage && (
+                        <div className="text-xl font-bold text-red-800 mb-6 p-4 bg-red-200 rounded-lg shadow-md text-center w-full max-w-4xl">
+                            <MathJaxDisplay text={systemMessage} />
+                        </div>
+                    )}
+
+                    {/* Equation Input Section (for reference only) */}
+                    <div className="control-section max-w-2xl">
+                        <div className="flex items-center mb-3">
+                            <h3 className="text-center text-xl font-bold text-gray-700 mr-2 whitespace-nowrap">
+                                Equazione da risolvere:
+                            </h3>
+                            <input
+                                type="text"
+                                value={equationInput}
+                                readOnly // Make it read-only
+                                className="flex-1 p-2 border border-gray-300 rounded-md bg-gray-100 cursor-not-allowed"
+                            />
+                        </div>
+                        <button onClick={generateNewEquation} className="w-full">
+                            Genera Nuova Equazione
+                        </button>
+                        <p className="text-sm text-gray-600 mt-3 text-center">
+                            Usa questa equazione come riferimento. Aggiungi i termini ai piatti manualmente.
+                        </p>
+                    </div>
+
+                    <div className="balance-container">
+                        <div className="pivot"></div>
+                        <div className="pivot-base"></div>
+                        <div className="beam" ref={beamRef} style={{ transform: `rotate(${tilt}deg)` }}> {/* Ref for rotation */}
+                            <div className="plate-holder">
+                                <div className="plate">
+                                    {leftItems.length > 0 ? (
+                                        leftItems.map((item, index) => (
+                                            <div key={`left-${index}`} className={`item-block ${item.type === 'variable' ? 'variable' : (item.numericValue >= 0 ? 'positive' : 'negative')}`}>
+                                                <ItemDisplay item={item} />
+                                            </div>
+                                        ))
+                                    ) : (
+                                        <div className="item-block positive">
+                                            <ItemDisplay item={zeroItem} />
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                            <div className="plate-holder">
+                                <div className="plate">
+                                    {rightItems.length > 0 ? (
+                                        rightItems.map((item, index) => (
+                                            <div key={`right-${index}`} className={`item-block ${item.type === 'variable' ? 'variable' : (item.numericValue >= 0 ? 'positive' : 'negative')}`}>
+                                                <ItemDisplay item={item} />
+                                            </div>
+                                        ))
+                                    ) : (
+                                        <div className="item-block positive">
+                                            <ItemDisplay item={zeroItem} />
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                        {/* Solved Message Overlay */}
+                        {solvedMessage && (
+                            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-green-600 text-black text-lg font-bold p-4 rounded-lg shadow-xl z-20 text-center">
+                                {solvedMessage}
+                            </div>
+                        )}
+                    </div>
+
+
+                    <div className="flex flex-col gap-6 w-full max-w-6xl"> {/* Increased max-w for the whole control section area */}
+                        {/* Consolidated Add/Remove Items Section */}
+                        {areSolvingControlsEnabled && (
+                            <div className="control-section max-w-6xl"> {/* Increased max-w for this specific section */}
+                                <h3>Aggiungi Elementi Manualmente</h3>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-4"> {/* Reduced horizontal gap */}
+                                    <div className="flex items-center justify-between gap-2">
+                                        <span className="text-lg font-semibold text-gray-600 w-32 flex-shrink-0 whitespace-nowrap">Numero:</span>
+                                        <button onClick={() => handleAddNumber('left')} className="flex-initial w-28">
+                                            Aggiungi Sinistra
+                                        </button>
+                                        <input
+                                            type="text" // Changed to text to allow fractions
+                                            placeholder="Es. 5, -3, 1/2"
+                                            value={addNumberValue}
+                                            onChange={(e) => setAddNumberValue(e.target.value)}
+                                            className="flex-1 p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400 mx-2"
+                                        />
+                                        <button onClick={() => handleAddNumber('right')} className="flex-initial w-28">
+                                            Aggiungi Destra
+                                        </button>
+                                    </div>
+
+                                    <div className="flex items-center justify-between gap-2">
+                                        <span className="text-lg font-semibold text-gray-600 w-32 flex-shrink-0 whitespace-nowrap">Termine X:</span>
+                                        <button onClick={() => handleAddXTerm('left')} className="flex-initial w-28">
+                                            Aggiungi Sinistra
+                                        </button>
+                                        <input
+                                            type="text"
+                                            placeholder="Es. 2x, -x, (1/2)x, -(2/3)x"
+                                            value={addXTermValue}
+                                            onChange={(e) => setAddXTermValue(e.target.value)}
+                                            className="flex-1 p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400 mx-2"
+                                        />
+                                        <button onClick={() => handleAddXTerm('right')} className="flex-initial w-28">
+                                            Aggiungi Destra
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* New section for removing specific items */}
+                        {areSolvingControlsEnabled && (
+                            <div className="control-section max-w-lg"> {/* Maintained max-w-lg for this section */}
+                                <h3>Rimuovi Elementi Specifici</h3>
+                                <div className="flex items-center justify-between gap-2">
+                                    <span className="text-lg font-semibold text-gray-600 w-32 flex-shrink-0 whitespace-nowrap">Rimuovi:</span>
+                                    <button onClick={() => handleRemoveItem('left')} className="flex-initial w-28">
+                                        Rimuovi Sinistra
+                                    </button>
+                                    <input
+                                        type="text"
+                                        placeholder="Es. 5, -3, 2x, -x, (1/2)x"
+                                        value={removeItemInput}
+                                        onChange={(e) => setRemoveItemInput(e.target.value)}
+                                        className="flex-1 p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400 mx-2"
+                                    />
+                                    <button onClick={() => handleRemoveItem('right')} className="flex-initial w-28">
+                                        Rimuovi Destra
+                                    </button>
+                                </div>
+                                <p className="text-sm text-gray-600 mt-3">
+                                    Rimuove la prima occorrenza dell'elemento specificato.
+                                </p>
+                            </div>
+                        )}
+
+                        {/* New row for principle sections */}
+                        {areSolvingControlsEnabled && (
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                {/* Apply Addition/Subtraction Principle Section */}
+                                <div className="control-section">
+                                    <h3>Applica il 1° Principio di Equivalenza delle Equazioni (Addizione/Sottrazione)</h3>
+                                    <input
+                                        type="text"
+                                        placeholder="Termine da aggiungere (es. +5, -2x)"
+                                        value={applyPrincipleTerm}
+                                        onChange={(e) => setApplyPrincipleTerm(e.target.value)}
+                                        className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus://ring-blue-400 mb-3"
+                                    />
+                                    <button onClick={applyAdditionSubtractionPrinciple} className="w-full">
+                                        Aggiungi questo termine a entrambi i lati
+                                    </button>
+                                    <p className="text-sm text-gray-600 mt-3">
+                                        Questo aggiungerà il termine esattamente come inserito a entrambi i piatti.
+                                    </p>
+                                </div>
+
+                                {/* Apply Operations Section (Moltiplicazione/Divisione) */}
+                                <div className="control-section">
+                                    <h3>Applica il 2° Principio di Equivalenza delle Equazioni (Moltiplicazione/Divisione)</h3>
+                                    <div className="flex flex-col items-center gap-2"> {/* Use flex-col to stack input above buttons */}
+                                        <input
+                                            type="text" // Changed to text to allow fractions
+                                            placeholder="Valore (es. 2, 0.5, 1/2, -3/4)"
+                                            value={opValue}
+                                            onChange={(e) => setOpOpValue(e.target.value)}
+                                            className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400 mb-3"
+                                        />
+                                        <div className="grid grid-cols-2 gap-3 w-full">
+                                            <button onClick={() => applyOperation('multiply')}>
+                                                Moltiplica entrambi i lati
+                                            </button>
+                                            <button onClick={() => applyOperation('divide')}>
+                                                Dividi entrambi i lati
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <p className="text-sm text-gray-600 mt-3">
+                                        Queste operazioni si applicano a tutti i termini sui piatti.
+                                    </p>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Global Action Buttons */}
+                    <div className="flex flex-wrap justify-center gap-4 mt-8 w-full max-w-full"> {/* Changed max-w to full */}
+                        <button onClick={handleRemoveOpposites} className="bg-orange-500 hover:bg-orange-600 text-black font-bold py-4 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105 flex-1 min-w-[180px]">
+                            Elimina Coppie Opposte
+                        </button>
+                        <button onClick={handleSumLikeTerms} className="bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-4 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105 flex-1 min-w-[180px]">
+                            Somma Algebrica di Monomi Simili
+                        </button>
+                        {/* Reintroduced the "Calcola Moltiplicazione/Divisione" button */}
+                        <button onClick={calculateOperationResult} className="bg-purple-600 hover:bg-purple-700 text-black font-bold py-4 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105 flex-1 min-w-[180px]">
+                            Calcola Moltiplicazione/Divisione
+                        </button>
+                        <button onClick={analyzeFinalEquation} className="bg-green-500 hover:bg-green-600 text-black font-bold py-4 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105 flex-1 min-w-[180px]">
+                            Analizza Soluzione Finale
+                        </button>
+                        <button onClick={undoLastAction} className="bg-red-500 hover:bg-red-600 text-black font-bold py-4 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105 flex-1 min-w-[180px]" disabled={history.length === 0}>
+                            Annulla Ultima Azione
+                        </button>
+                    </div>
+
+                    <button onClick={clearAll} className="mt-4 bg-blue-800 hover:bg-blue-900 text-white font-bold py-3 px-6 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105">
+                        Azzera Bilancia
+                    </button>
+                    <p className="text-sm text-gray-600 mt-3 text-center">
+                        Nota: La bilancia mostra l'uguaglianza simbolica delle espressioni. L'inclinazione indica che il piatto con il valore numerico totale più piccolo è più in basso.
+                    </p>
+                </div>
+            );
+        };
+
+        // Use window.onload to ensure all scripts and DOM are loaded
+        window.onload = function() {
+            if (window.ReactDOM) {
+                window.ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+            } else {
+                console.error("ReactDOM non caricato correttamente. Controlla i tag script CDN.");
+            }
+        };
+    </script>
+</body>
+</html>
