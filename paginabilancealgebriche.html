@@ -5,61 +5,135 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pagina Bilance Algebriche</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
+        
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Inter', sans-serif;
             line-height: 1.6;
-            margin: 20px;
-            background-color: #f4f4f4;
-            color: #333;
+            margin: 0;
+            padding: 20px;
+            background-color: #f9f9f9; /* Sfondo molto chiaro */
+            color: #333; /* Testo scuro per un'ottima leggibilità */
         }
         .container {
             max-width: 900px;
             margin: auto;
-            background: #fff;
+            background: #ffffff;
             padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        h1, h2, h3 {
+            text-align: center; /* Centra tutti i titoli */
         }
         h1 {
-            color: #2c3e50;
-            text-align: center;
-            margin-bottom: 30px;
+            color: #1a5276; /* Blu scuro */
+            margin-bottom: 15px; /* Spazio sotto il titolo principale */
+            font-size: 2.2em;
         }
         h2 {
-            color: #3498db;
-            border-bottom: 2px solid #eee;
-            padding-bottom: 10px;
-            margin-top: 40px;
+            color: #4a86b3; /* Blu medio per i titoli all'interno dei riquadri */
+            border-bottom: none;
+            padding-bottom: 0;
+            margin-top: 0; /* Rimuove il margine superiore per i titoli all'interno dei riquadri */
+            font-size: 1.8em;
         }
         h3 {
-            color: #2980b9;
-            margin-top: 20px;
+            color: #336699;
+            margin-top: 15px;
+            font-size: 1.3em;
         }
         p {
-            margin-bottom: 10px;
+            margin-bottom: 8px; /* Riduce il margine tra i paragrafi */
+            margin-top: 5px; 
+            font-size: 1.05em;
         }
         ul {
-            list-style-type: disc;
+            list-style-type: '👉 ';
             margin-left: 20px;
+            margin-top: 5px;
+        }
+        li {
+            margin-bottom: 8px;
         }
         .section-content {
-            background-color: #ecf0f1;
-            padding: 15px;
-            border-radius: 5px;
-            margin-top: 15px;
+            background-color: #f0f4f7; /* Azzurro chiaro per il primo riquadro, ora più neutro */
+            padding: 10px 18px 18px 18px; /* Ridotto il padding superiore */
+            border-radius: 10px;
+            margin-top: 30px; /* Margine superiore di 30px per allineare lo spazio con il riquadro sottostante */
+        }
+        .algebriche-link-section {
+            margin-top: 30px;
+            padding: 22px;
+            background-color: #fff3e0; /* Arancione/Pesca chiaro */
+            border-left: 5px solid #ff9800;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+        }
+        .algebriche-link-section p {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #e65100;
+        }
+        .algebriche-link-section a {
+            font-size: 1.3em;
+            color: #1a5276; /* Nuovo blu più scuro e soft */
+            text-decoration: none;
+            font-weight: bold;
+            display: block;
+            margin-bottom: 8px;
+            transition: color 0.2s;
+        }
+        .algebriche-link-section a:hover {
+            text-decoration: underline;
+            color: #2874a6; /* Nuovo blu per l'hover */
+        }
+        .table-section {
+            margin-top: 30px; /* Margine per la distanza tra i riquadri */
+            background-color: #fce4ec; /* Rosa pallido per il riquadro della tabella */
+            padding: 10px 25px 25px 25px; /* Ridotto il padding superiore */
+            border: 2px solid #ccc;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            border: 1px solid #bdc3c7; /* Bordi tabella grigi */
+            padding: 12px;
+            text-align: center;
+            color: #333; /* Testo scuro in tutte le celle */
+        }
+        th {
+            background-color: #e9ecef; /* Grigio chiaro per i titoli */
+            font-weight: bold;
+            color: #555; /* Grigio scuro per il testo dei titoli */
+        }
+        tr:nth-child(even) {
+            background-color: #f8f9fa; /* Grigio molto chiaro per le righe pari */
+        }
+        tr:nth-child(odd) {
+            background-color: #ffffff; /* Bianco per le righe dispari */
         }
         .back-link {
             display: block;
-            margin-top: 30px;
+            margin-top: 40px; 
             text-align: center;
         }
         .back-link a {
-            color: #3498db;
+            color: #1a5276;
             text-decoration: none;
             font-weight: bold;
+            font-size: 1.1em;
+            transition: color 0.2s;
         }
         .back-link a:hover {
             text-decoration: underline;
+            color: #2874a6;
         }
     </style>
 </head>
@@ -69,14 +143,55 @@
 
         <p>Le bilance algebriche sono una rappresentazione visiva e concettuale delle equazioni. Immagina una bilancia a due bracci: ciò che metti su un lato deve essere bilanciato da ciò che metti sull'altro lato per mantenere l'equilibrio. Ogni operazione che compi su un lato dell'equazione (aggiungere, sottrarre, moltiplicare, dividere) deve essere eseguita anche sull'altro lato per mantenere l'uguaglianza.</p>
 
-        <h2>Concetti Fondamentali</h2>
         <div class="section-content">
+            <h2>Concetti Fondamentali</h2>
             <ul>
                 <li><strong>Equazioni come Bilance:</strong> Un'equazione come x + 5 = 10 può essere vista come una bilancia in equilibrio, dove x + 5 è su un piatto e 10 sull'altro.</li>
                 <li><strong>Mantenere l'Equilibrio:</strong> Per risolvere x, dobbiamo rimuovere 5 da entrambi i lati per mantenere la bilancia equilibrata: x + 5 - 5 = 10 - 5, quindi x = 5.</li>
                 <li><strong>Variabili:</strong> Le incognite (come x, y, z) sono come pesi sconosciuti sulla bilancia.</li>
             </ul>
-            <p>Esempio pratico: Se hai 3 mele e x banane su un piatto, e 8 frutti sull'altro, la bilancia ti aiuta a capire quante banane hai.</p>
+            <p>Esempio pratico: Immagina una bilancia a due piatti in cui da una parte sono presenti tre blocchi di peso 1 e un blocco di peso sconosciuto 'x', e dall'altra sono presenti otto blocchi di peso 1. Per mantenere l'equilibrio, il peso 'x' deve essere pari a 5.</p>
+        </div>
+
+        <div class="table-section">
+            <h2>Classificazione delle Soluzioni</h2>
+            <p>Ecco una panoramica di come vengono classificate le equazioni di primo grado, basata sui valori dei coefficienti A e B nell'equazione Ax = B.</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>A</th>
+                        <th>B</th>
+                        <th>Classificazione</th>
+                        <th>Insieme delle Soluzioni</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>A ≠ 0</td>
+                        <td>qualsiasi B</td>
+                        <td>Determinata</td>
+                        <td>Soluzione singola<br>+ 1 x = ...</td>
+                    </tr>
+                    <tr>
+                        <td>A = 0</td>
+                        <td>B = 0</td>
+                        <td>Indeterminata</td>
+                        <td>∀ x ∈ R</td>
+                    </tr>
+                    <tr>
+                        <td>A = 0</td>
+                        <td>B ≠ 0</td>
+                        <td>Impossibile</td>
+                        <td>Ø<br>∄ x ∈ R</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="algebriche-link-section">
+            <p><strong>Scegli il tipo di esercizio:</strong></p>
+            <a href="equazioneassegnata.html">Vai alla Bilancia con Equazione Assegnata →</a>
+            <a href="equazioneinserita.html">Vai alla Bilancia con Equazione da Inserire →</a>
         </div>
 
         <div class="back-link">
