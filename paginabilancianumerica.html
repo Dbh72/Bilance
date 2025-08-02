@@ -5,65 +5,155 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pagina Bilancia Numerica</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
+        
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Inter', sans-serif;
             line-height: 1.6;
             margin: 20px;
-            background-color: #f4f4f4;
-            color: #333;
+            /* Sfondo più chiaro e moderno */
+            background-color: #f0f4f8;
+            /* Testo nero per una migliore leggibilità */
+            color: #333333;
         }
         .container {
             max-width: 900px;
             margin: auto;
-            background: #fff;
+            background: #ffffff;
             padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         }
         h1 {
-            color: #2c3e50;
+            /* Colore blu più deciso per il titolo principale */
+            color: #2E86AB;
             text-align: center;
-            margin-bottom: 30px;
+            /* Spazio ridotto tra titolo e testo */
+            margin-bottom: 10px;
+            font-size: 2.2em;
         }
         h2 {
-            color: #3498db;
-            border-bottom: 2px solid #eee;
+            /* Colore più scuro per i sottotitoli */
+            color: #2E86AB;
             padding-bottom: 10px;
-            margin-top: 40px;
+            /* Spazio ridotto tra riquadro e titolo */
+            margin-top: 20px;
+            font-size: 1.8em;
+            text-align: center; /* Centrato per coerenza */
         }
         h3 {
-            color: #2980b9;
+            /* Colore più scuro per i sottotitoli interni */
+            color: #2E86AB;
             margin-top: 20px;
         }
         p {
             margin-bottom: 10px;
+            text-align: justify;
         }
-        ul {
-            list-style-type: disc;
-            margin-left: 20px;
+        /* Riquadro del titolo principale - rosa pesca */
+        .title-box {
+            background-color: #FDE7E7;
+            /* Spazio interno uniforme */
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+        .title-box h1 {
+            margin-top: 5px; /* Spazio ridotto per il titolo */
+            margin-bottom: 5px; /* Spazio ridotto per il titolo */
+        }
+        .title-box p {
+            margin-top: 5px; /* Spazio ridotto per il testo */
+            margin-bottom: 5px; /* Spazio ridotto per il testo */
+            text-align: justify;
+        }
+        /* Riquadro del testo di introduzione */
+        .intro-box {
+            padding: 0 15px; /* Spazio interno per allineamento */
+            margin-bottom: 20px;
         }
         .section-content {
-            background-color: #ecf0f1;
-            padding: 15px;
-            border-radius: 5px;
+            /* Sfondo pastello armonioso (verde acqua) */
+            background-color: #E3F4F4;
+            /* Spazio interno uniforme */
+            padding: 10px 15px; /* Spazio ridotto in alto e in basso */
+            border-radius: 8px;
+            /* Spazio ridotto tra riquadro e titolo */
             margin-top: 15px;
+            margin-bottom: 15px;
         }
-        .app-link-section {
-            margin-top: 30px;
-            padding: 20px;
-            background-color: #d4edda;
-            border-left: 5px solid #28a745;
-            border-radius: 5px;
+        .section-content h2 {
+            margin-top: 5px; /* Spazio ulteriormente ridotto per il titolo */
+            margin-bottom: 5px;
+        }
+        /* Stile per gli elementi della lista personalizzata */
+        .bullet-list-item {
+            display: flex; /* Utilizza il layout flexbox per l'allineamento */
+            margin-bottom: 5px; /* Spazio tra gli elementi della lista */
+            align-items: baseline; /* Allinea il testo alla base della riga */
+        }
+        .bullet {
+            padding-right: 8px; /* Spazio tra il punto elenco e il testo */
+            flex-shrink: 0; /* Impedisce al punto elenco di restringersi */
+            font-weight: bold;
+        }
+        .bullet-content {
+            flex-grow: 1; /* Permette al contenuto di occupare lo spazio rimanente */
+        }
+        .bullet-content p {
+            margin-top: 0; /* Rimuove lo spazio extra dei paragrafi */
+            margin-bottom: 0;
+            padding-left: 20px; /* Indentazione per allineare correttamente */
+            text-indent: -20px; /* Sposta il testo indietro */
+        }
+        .bullet-content strong {
+            /* Assicura che il testo in grassetto si allinei correttamente */
+            display: block;
+            margin-bottom: 5px;
+        }
+        /* Stile per l'esempio in corsivo */
+        .example-text {
+            display: block;
+            margin-left: 20px; /* Allineamento con il testo precedente */
+            margin-bottom: 10px;
+        }
+        /* Stile per le immagini SVG */
+        .example-svg {
+            display: block;
+            max-width: 300px;
+            width: 100%;
+            height: auto;
+            margin: 15px auto 5px auto;
+        }
+        .svg-text-below {
             text-align: center;
+            font-weight: bold;
+            font-family: 'Inter', sans-serif;
+            margin-top: 5px;
+            margin-bottom: 20px;
+        }
+        
+        .app-link-section {
+            margin-top: 15px;
+            padding: 20px;
+            background-color: #D4EDDA;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .app-link-section p {
+            margin: 0 0 10px 0;
+            color: #333333; /* Reso il testo nero per coerenza */
         }
         .app-link-section a {
             font-size: 1.2em;
+            /* Colore link più standard */
             color: #007bff;
             text-decoration: none;
             font-weight: bold;
         }
         .app-link-section a:hover {
             text-decoration: underline;
+            /* Colore al passaggio del mouse più scuro */
             color: #0056b3;
         }
         .back-link {
@@ -72,35 +162,114 @@
             text-align: center;
         }
         .back-link a {
-            color: #3498db;
+            /* Colore link più standard */
+            color: #007bff;
             text-decoration: none;
             font-weight: bold;
         }
         .back-link a:hover {
             text-decoration: underline;
+            /* Colore al passaggio del mouse più scuro */
+            color: #0056b3;
+        }
+        /* Stile per la data e l'ora in alto a destra */
+        #top-right-datetime {
+            text-align: right;
+            font-size: 0.9em;
+            color: #4a679b;
+            margin-bottom: 20px;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>La Bilancia Numerica</h1>
+        <!-- Elemento per visualizzare la data e l'ora aggiornate, posizionato in alto a destra -->
+        <p id="top-right-datetime"></p>
+        <div class="title-box">
+            <h1>La Bilancia Numerica</h1>
+            <p>La bilancia numerica, pur condividendo il principio dell'equilibrio, si concentra sul confronto e la relazione tra i numeri stessi, spesso in contesti di disuguaglianze o rappresentazioni grafiche.<br>Può aiutare a visualizzare come i numeri si rapportano tra loro su una linea numerica o in un sistema di coordinate.</p>
+        </div>
 
-        <p>La bilancia numerica, pur condividendo il principio dell'equilibrio, si concentra sul confronto e la relazione tra i numeri stessi, spesso in contesti di disuguaglianze o rappresentazioni grafiche. Può aiutare a visualizzare come i numeri si rapportano tra loro su una linea numerica o in un sistema di coordinate.</p>
-
-        <h2>Concetti Fondamentali della Bilancia Numerica</h2>
         <div class="section-content">
-            <ul>
-                <li><strong>Confronto di Numeri:</strong> Una bilancia numerica può rappresentare se un numero è maggiore, minore o uguale a un altro. Ad esempio, 7 > 3 può essere visualizzato come il 7 che "pesa di più" del 3.</li>
-                <li><strong>Valore Assoluto:</strong> La distanza di un numero dallo zero sulla linea numerica. Entrambi -5 e 5 hanno lo stesso "peso" in termini di distanza da zero.</li>
-                <li><strong>Operazioni Aritmetiche:</strong> Visualizzare l'effetto delle addizioni, sottrazioni, moltiplicazioni e divisioni sui numeri, mantenendo l'equilibrio o alterandolo in modo prevedibile.</li>
-            </ul>
-            <p>Esempio pratico: Immagina una bilancia dove i numeri sono posizionati in base al loro valore. I numeri negativi sono su un lato e i positivi sull'altro, con lo zero al centro.</p>
+            <h2>Concetti Fondamentali della Bilancia Numerica</h2>
+            <div class="bullet-list-item">
+                <div class="bullet">•</div>
+                <div class="bullet-content">
+                    <strong>Confronto di Numeri:</strong>
+                    <p>una bilancia numerica può rappresentare se un numero è maggiore, minore o uguale a un altro.</p>
+                    <p class="example-text"><i>Ad esempio <span style="color: #27ae60;">7</span> > <span style="color: #c0392b;">3</span> può essere visualizzato come il <span style="color: #27ae60;">7</span> che "pesa di più" del <span style="color: #c0392b;">3</span>.</i></p>
+                    <div class="example-svg" aria-label="Rappresentazione grafica di 7 maggiore di 3 su una retta numerica.">
+                        <svg width="100%" viewBox="0 0 300 100" xmlns="http://www.w3.org/2000/svg">
+                            <!-- Linea numerica -->
+                            <line x1="20" y1="50" x2="280" y2="50" stroke="#333333" stroke-width="2" marker-end="url(#arrowhead)"/>
+                            <!-- Punti e numeri -->
+                            <circle cx="150" cy="50" r="4" fill="#333333"/>
+                            <text x="150" y="75" text-anchor="middle" font-family="Inter, sans-serif" font-size="16" fill="#333333">0</text>
+                            
+                            <circle cx="190" cy="50" r="6" fill="#c0392b"/> <!-- Colore rosso per il 3 -->
+                            <text x="190" y="75" text-anchor="middle" font-family="Inter, sans-serif" font-size="16" font-weight="bold" fill="#c0392b">3</text>
+                            
+                            <circle cx="230" cy="50" r="6" fill="#27ae60"/> <!-- Colore verde per il 7 -->
+                            <text x="230" y="75" text-anchor="middle" font-family="Inter, sans-serif" font-size="16" font-weight="bold" fill="#27ae60">7</text>
+
+                            <!-- Etichetta di confronto centrata con colori corrispondenti -->
+                            <text x="150" y="30" text-anchor="middle" font-family="Inter, sans-serif" font-size="16" font-weight="bold">
+                                <tspan fill="#27ae60">7</tspan>
+                                <tspan fill="#333333"> ></tspan>
+                                <tspan fill="#c0392b"> 3</tspan>
+                            </text>
+                            
+                            <defs>
+                                <marker id="arrowhead" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                                    <path d="M 0 0 L 10 5 L 0 10 z" fill="#333333" />
+                                </marker>
+                            </defs>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+            <div class="bullet-list-item">
+                <div class="bullet">•</div>
+                <div class="bullet-content">
+                    <strong>Valore Assoluto:</strong>
+                    <p>la distanza di un numero dallo zero sulla linea numerica.</p>
+                    <p class="example-text"><i>Ad esempio entrambi <span style="color: #c0392b;">-5</span> e <span style="color: #27ae60;">+5</span> hanno lo stesso "peso" in termini di distanza da zero.</i></p>
+                    <div class="example-svg" aria-label="Rappresentazione grafica del valore assoluto su una retta numerica.">
+                        <svg width="100%" viewBox="0 0 300 100" xmlns="http://www.w3.org/2000/svg">
+                            <!-- Linea numerica -->
+                            <line x1="20" y1="50" x2="280" y2="50" stroke="#333333" stroke-width="2" marker-end="url(#arrowhead)"/>
+                            <!-- Punti e numeri -->
+                            <circle cx="150" cy="50" r="4" fill="#333333"/>
+                            <text x="150" y="75" text-anchor="middle" font-family="Inter, sans-serif" font-size="16" fill="#333333">0</text>
+                            
+                            <circle cx="75" cy="50" r="6" fill="#c0392b"/> <!-- Colore rosso per il -5 -->
+                            <text x="75" y="75" text-anchor="middle" font-family="Inter, sans-serif" font-size="16" font-weight="bold" fill="#c0392b">-5</text>
+                            
+                            <circle cx="225" cy="50" r="6" fill="#27ae60"/> <!-- Colore verde per il +5 -->
+                            <text x="225" y="75" text-anchor="middle" font-family="Inter, sans-serif" font-size="16" font-weight="bold" fill="#27ae60">+5</text>
+                            
+                            <!-- Archi per rappresentare la distanza, ora neri -->
+                            <path d="M 75 50 Q 112.5 25, 150 50" fill="none" stroke="#333333" stroke-width="2"/>
+                            <path d="M 150 50 Q 187.5 25, 225 50" fill="none" stroke="#333333" stroke-width="2"/>
+                            <text x="112.5" y="20" text-anchor="middle" font-family="Inter, sans-serif" font-size="16" fill="#333333">5 unità</text>
+                            <text x="187.5" y="20" text-anchor="middle" font-family="Inter, sans-serif" font-size="16" fill="#333333">5 unità</text>
+
+                            <defs>
+                                <marker id="arrowhead" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                                    <path d="M 0 0 L 10 5 L 0 10 z" fill="#333333" />
+                                </marker>
+                            </defs>
+                        </svg>
+                    </div>
+                    <!-- Nuova riga di testo richiesta con colori corrispondenti -->
+                    <p class="svg-text-below">|<span style="color: #c0392b;">-5</span>| = |<span style="color: #27ae60;">+5</span>| = 5 unità</p>
+                </div>
+            </div>
         </div>
 
         <!-- Nuova sezione per il link all'app -->
         <div class="app-link-section">
-            <p><strong>Prova la nostra applicazione interattiva:</strong></p>
-            <!-- IL NOME DEL FILE QUI SOTTO DEVE ESSERE ESATTAMENTE IL NOME DEL FILE DELLA TUA APP! -->
+            <p><strong>Prova l'applicazione interattiva:</strong></p>
             <a href="bilancianumericaapp.html">Accedi alla Bilancia Numerica App &rarr;</a>
         </div>
 
@@ -108,5 +277,41 @@
             <a href="index.html">&larr; Torna alla Pagina Principale delle Bilance</a>
         </div>
     </div>
+    <script>
+        // Funzione per aggiornare la data e l'ora
+        function updateDateTime() {
+            // Ottiene l'elemento HTML dove mostrare data e ora
+            const datetimeElement = document.getElementById('top-right-datetime');
+            // Crea un nuovo oggetto Date
+            const now = new Date();
+            
+            // Opzioni di formattazione per la data (giorno della settimana, giorno, mese e anno)
+            const dateOptions = {
+                weekday: 'long',
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric' // Anno aggiunto
+            };
+
+            // Opzioni di formattazione per l'ora (solo ora e minuti)
+            const timeOptions = { 
+                hour: '2-digit', 
+                minute: '2-digit' 
+            };
+            
+            // Formatta la data e l'ora
+            const formattedDate = now.toLocaleDateString('it-IT', dateOptions);
+            const formattedTime = now.toLocaleTimeString('it-IT', timeOptions);
+            
+            // Aggiorna il testo dell'elemento con data e ora
+            datetimeElement.textContent = formattedDate + ' ' + formattedTime;
+        }
+
+        // Chiama la funzione una volta all'avvio per mostrare subito l'ora
+        updateDateTime();
+
+        // Aggiorna l'ora ogni secondo (1000 millisecondi)
+        setInterval(updateDateTime, 1000);
+    </script>
 </body>
 </html>
