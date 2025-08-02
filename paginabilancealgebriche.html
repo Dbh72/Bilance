@@ -19,9 +19,17 @@
             max-width: 900px;
             margin: auto;
             background: #ffffff;
-            padding: 30px;
+            padding: 60px 30px 30px 30px; /* Aumento il padding superiore per la data */
             border-radius: 12px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            position: relative; /* Necessario per posizionare la data in alto a destra */
+        }
+        .date-display {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            font-size: 0.9em;
+            color: #555;
         }
         h1, h2, h3 {
             text-align: center; /* Centra tutti i titoli */
@@ -164,6 +172,7 @@
 </head>
 <body>
     <div class="container">
+        <div id="current-date" class="date-display"></div>
         
         <div class="intro-box">
             <h1>Le Bilance Algebriche</h1>
@@ -234,5 +243,16 @@
             <a href="index.html">&larr; Torna alla Pagina Principale delle Bilance</a>
         </div>
     </div>
+
+    <script>
+        window.onload = function() {
+            const today = new Date();
+            const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const timeOptions = { hour: '2-digit', minute: '2-digit' };
+            const formattedDate = today.toLocaleDateString('it-IT', dateOptions);
+            const formattedTime = today.toLocaleTimeString('it-IT', timeOptions);
+            document.getElementById('current-date').textContent = `${formattedDate} | ${formattedTime}`;
+        };
+    </script>
 </body>
 </html>
