@@ -12,9 +12,7 @@
             line-height: 1.6;
             margin: 0;
             padding: 0;
-            /* Nuovo sfondo più chiaro e pulito */
             background-color: #f8f9fa;
-            /* Testo nero per una migliore leggibilità */
             color: #111827;
         }
         .container {
@@ -29,7 +27,6 @@
             text-align: center;
         }
         h1 {
-            /* Nuovo colore blu più acceso e moderno */
             color: #2a52be;
             margin-bottom: 5px;
             font-size: 2.2em;
@@ -37,9 +34,18 @@
         .author {
             text-align: center;
             font-size: 1.1em;
-            /* Testo nero per l'autore */
             color: #111827;
+            margin-bottom: 5px;
+        }
+        /* Stile per l'elemento della data e ora, ora all'interno del container */
+        #top-right-datetime {
+            text-align: right;
+            font-size: 0.9em;
+            font-weight: normal;
+            /* Nuovo colore più scuro ed elegante per la data e l'ora */
+            color: #4a679b;
             margin-bottom: 20px;
+            margin-top: 0;
         }
         /* Stile generale per i riquadri delle sezioni */
         .section-box {
@@ -49,21 +55,17 @@
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
         }
         .intro-box {
-            /* Colore azzurro chiaro */
             background-color: #e0f7fa;
             margin-top: 0;
         }
         .algebriche-box {
-            /* Nuovo colore: rosa pastello */
             background-color: #fce4ec;
         }
         .numerica-box {
-            /* Nuovo colore: giallo-arancio tenue */
             background-color: #fff3e0;
         }
         
         h2 {
-            /* Testo nero per i titoli */
             color: #111827;
             border-bottom: none;
             padding-bottom: 0;
@@ -72,7 +74,6 @@
             font-size: 1.8em;
         }
         h3 {
-            /* Testo nero per i sottotitoli */
             color: #111827;
             margin-top: 5px;
             margin-bottom: 5px;
@@ -101,11 +102,12 @@
         .approfondisci-link::after {
             content: ' →';
         }
-
     </style>
 </head>
 <body>
     <div class="container">
+        <!-- Elemento per visualizzare la data e l'ora aggiornate, ora posizionato qui -->
+        <p id="top-right-datetime"></p>
         <div class="intro-box section-box">
             <h1>Benvenuti nella Pagina delle Bilance</h1>
             <p class="author">Prof.ssa Deborah Di Muzio</p>
@@ -133,5 +135,41 @@
             <a href="paginabilancealgebriche.html" class="approfondisci-link">Vai alle Bilance Algebriche (Approfondimento)</a>
         </div>
     </div>
+    <script>
+        // Funzione per aggiornare la data e l'ora
+        function updateDateTime() {
+            // Ottiene l'elemento HTML dove mostrare data e ora
+            const datetimeElement = document.getElementById('top-right-datetime');
+            // Crea un nuovo oggetto Date
+            const now = new Date();
+            
+            // Opzioni di formattazione per la data (giorno della settimana, giorno, mese e anno)
+            const dateOptions = {
+                weekday: 'long',
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric' // Anno aggiunto
+            };
+
+            // Opzioni di formattazione per l'ora (solo ora e minuti)
+            const timeOptions = { 
+                hour: '2-digit', 
+                minute: '2-digit' 
+            };
+            
+            // Formatta la data e l'ora
+            const formattedDate = now.toLocaleDateString('it-IT', dateOptions);
+            const formattedTime = now.toLocaleTimeString('it-IT', timeOptions);
+            
+            // Aggiorna il testo dell'elemento con data e ora
+            datetimeElement.textContent = formattedDate + ' ' + formattedTime;
+        }
+
+        // Chiama la funzione una volta all'avvio per mostrare subito l'ora
+        updateDateTime();
+
+        // Aggiorna l'ora ogni secondo (1000 millisecondi)
+        setInterval(updateDateTime, 1000);
+    </script>
 </body>
 </html>
