@@ -166,6 +166,10 @@
         .control-section .grid button {
             @apply bg-rose-200 hover:bg-rose-300 text-black;
         }
+        /* Stile per i nuovi pulsanti "Aggiungi" */
+        .add-button {
+            @apply bg-gradient-to-br from-green-300 to-green-500 hover:from-green-400 hover:to-green-600 text-black font-bold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105;
+        }
 
         /* General styling for fraction display */
         .flex-col .text-sm {
@@ -173,6 +177,11 @@
         }
         .flex-col .text-black {
             white-space: nowrap;
+        }
+
+        /* Stile per i nuovi link in fondo alla pagina */
+        .footer-link {
+            @apply bg-gradient-to-r from-red-400 to-rose-500 hover:from-red-500 hover:to-rose-600 text-black font-bold py-3 px-6 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105;
         }
     </style>
 </head>
@@ -561,6 +570,28 @@
         const App = () => {
             const { useState, useEffect, useRef, useCallback, useMemo } = React; // Destruttura gli hook di React
 
+            // Stato per data e ora
+            const [currentDate, setCurrentDate] = useState('');
+            const [currentTime, setCurrentTime] = useState('');
+
+            // Aggiungi un useEffect per aggiornare l'ora ogni minuto
+            useEffect(() => {
+                const updateTime = () => {
+                    const now = new Date();
+                    // Modificato per includere il giorno della settimana e rimuovere i secondi
+                    const formattedDate = now.toLocaleDateString('it-IT', { weekday: 'long', day: '2-digit', month: '2-digit', year: 'numeric' });
+                    const formattedTime = now.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
+                    setCurrentDate(formattedDate);
+                    setCurrentTime(formattedTime);
+                };
+
+                updateTime(); // Imposta l'ora iniziale immediatamente
+                // Aggiorna l'intervallo a ogni minuto, poiché i secondi sono stati rimossi
+                const intervalId = setInterval(updateTime, 60000);
+
+                return () => clearInterval(intervalId); // Pulisci l'intervallo all'unmount
+            }, []);
+
             // Un elemento zero per la visualizzazione quando i piatti sono vuoti
             const zeroItem = useMemo(() => ({ type: 'number', fractionalValue: { numerator: 0, denominator: 1, sign: 1 }, numericValue: 0, originalInputString: '0' }), []);
 
@@ -805,18 +836,20 @@
                 setSystemMessage(null);
             }, [saveState]);
 
-            const handleAddNumber = useCallback((side) => {
+            const handleAddNumber = useCallback(() => {
                 const parsed = parseFractionOrNumber(addNumberValue);
                 if (parsed.error) {
                     setSystemMessage(parsed.error + '. Controlla che i valori frazionari siano scritti correttamente.');
                     return;
                 }
-                addItemToSide(side, { ...parsed, type: 'number' });
+                // Aggiungi a entrambi i lati per coerenza con il principio di equivalenza
+                addItemToSide('left', { ...parsed, type: 'number' });
+                addItemToSide('right', { ...parsed, type: 'number' });
                 setMessage('Numero aggiunto con successo.');
                 setAddNumberValue('');
             }, [addNumberValue, addItemToSide, setSystemMessage, setMessage, setAddNumberValue]);
 
-            const handleAddXTerm = useCallback((side) => {
+            const handleAddXTerm = useCallback(() => {
                 let inputString = addXTermValue.trim();
                 if (inputString === '') {
                     setSystemMessage('Per favor, inserisci un termine X (es. 2x, -x, (1/2)x, -(2/3)x).');
@@ -828,7 +861,9 @@
                         setSystemMessage('L\'input deve essere un termine X. Controlla il formato.');
                         return;
                     }
-                    addItemToSide(side, itemToAdd);
+                    // Aggiungi a entrambi i lati per coerenza con il principio di equivalenza
+                    addItemToSide('left', itemToAdd);
+                    addItemToSide('right', itemToAdd);
                     setMessage('Termine X aggiunto con successo.');
                     setAddXTermValue('');
                 } catch (error) {
@@ -1326,8 +1361,12 @@
 
 
             return (
-                <div className="min-h-screen bg-gradient-to-br from-rose-50 to-rose-200 flex flex-col items-center justify-center p-4 font-inter">
-                    <h1 className="text-4xl font-extrabold text-gray-800 mb-4 text-center drop-shadow-md">
+                <div className="min-h-screen bg-gradient-to-br from-rose-50 to-rose-200 flex flex-col items-center justify-center p-4 font-inter relative">
+                    <div className="absolute top-4 right-4 text-sm font-semibold text-gray-700 flex flex-row items-center space-x-4">
+                        <div>{currentDate}</div>
+                        <div>{currentTime}</div>
+                    </div>
+                    <h1 className="text-4xl font-extrabold text-gray-800 mt-12 mb-4 text-center drop-shadow-md">
                         Bilancia Algebrica con Equazione Assegnata
                     </h1>
 
@@ -1416,64 +1455,72 @@
                         {areSolvingControlsEnabled && (
                             <div className="control-section max-w-6xl">
                                 <h3 className="mb-4">Aggiungi Elementi Manualmente</h3>
+                                {/* Nuova struttura per una migliore allineamento */}
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-4">
-                                    {/* Ho modificato le classi qui per una migliore reattività e per prevenire sovrapposizioni */}
-                                    <div className="flex flex-wrap items-center gap-2">
+                                    {/* Sezione per i numeri */}
+                                    <div className="grid grid-cols-[auto,1fr,auto] items-center gap-2">
                                         <span className="text-lg font-semibold text-gray-600 whitespace-nowrap">Numero:</span>
-                                        <button onClick={() => handleAddNumber('left')} className="bg-rose-200 hover:bg-rose-300 text-black flex-1 min-w-[80px]">
-                                            Aggiungi Sinistra
-                                        </button>
-                                        <input
-                                            type="text"
-                                            placeholder="Es. 5, -3, 1/2"
-                                            value={addNumberValue}
-                                            onChange={(e) => setAddNumberValue(e.target.value)}
-                                            className="flex-1 p-2 border border-rose-300 rounded-md focus:ring-2 focus:ring-rose-400 mx-2"
-                                        />
-                                        <button onClick={() => handleAddNumber('right')} className="bg-rose-200 hover:bg-rose-300 text-black flex-1 min-w-[80px]">
-                                            Aggiungi Destra
-                                        </button>
+                                        <div className="flex items-center gap-2">
+                                            <button onClick={() => handleAddNumber('left')} className="add-button flex-1">
+                                                Aggiungi Sinistra
+                                            </button>
+                                            <input
+                                                type="text"
+                                                placeholder="Es. 5, -3, 1/2"
+                                                value={addNumberValue}
+                                                onChange={(e) => setAddNumberValue(e.target.value)}
+                                                className="flex-1 p-2 border border-rose-300 rounded-md focus:ring-2 focus:ring-rose-400"
+                                            />
+                                            <button onClick={() => handleAddNumber('right')} className="add-button flex-1">
+                                                Aggiungi Destra
+                                            </button>
+                                        </div>
                                     </div>
-
-                                    <div className="flex flex-wrap items-center gap-2">
+                                    
+                                    {/* Sezione per i termini X */}
+                                    <div className="grid grid-cols-[auto,1fr,auto] items-center gap-2">
                                         <span className="text-lg font-semibold text-gray-600 whitespace-nowrap">Termine X:</span>
-                                        <button onClick={() => handleAddXTerm('left')} className="bg-rose-200 hover:bg-rose-300 text-black flex-1 min-w-[80px]">
-                                            Aggiungi Sinistra
-                                        </button>
-                                        <input
-                                            type="text"
-                                            placeholder="Es. 2x, -x, (1/2)x, -(2/3)x"
-                                            value={addXTermValue}
-                                            onChange={(e) => setAddXTermValue(e.target.value)}
-                                            className="flex-1 p-2 border border-rose-300 rounded-md focus:ring-2 focus:ring-rose-400 mx-2"
-                                        />
-                                        <button onClick={() => handleAddXTerm('right')} className="bg-rose-200 hover:bg-rose-300 text-black flex-1 min-w-[80px]">
-                                            Aggiungi Destra
-                                        </button>
+                                        <div className="flex items-center gap-2">
+                                            <button onClick={() => handleAddXTerm('left')} className="add-button flex-1">
+                                                Aggiungi Sinistra
+                                            </button>
+                                            <input
+                                                type="text"
+                                                placeholder="Es. 2x, -x, (1/2)x, -(2/3)x"
+                                                value={addXTermValue}
+                                                onChange={(e) => setAddXTermValue(e.target.value)}
+                                                className="flex-1 p-2 border border-rose-300 rounded-md focus:ring-2 focus:ring-rose-400"
+                                            />
+                                            <button onClick={() => handleAddXTerm('right')} className="add-button flex-1">
+                                                Aggiungi Destra
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         )}
 
-                        {/* Nuova sezione per la rimozione di elementi specifici */}
+                        {/* Nuova sezione per la rimozione di elementi specifici - LAYOUT CORRETTO */}
                         {areSolvingControlsEnabled && (
                             <div className="control-section max-w-lg">
                                 <h3 className="mb-4">Rimuovi Elementi Specifici</h3>
-                                <div className="flex flex-wrap items-center gap-2">
+                                <div className="grid grid-cols-1 sm:grid-cols-[auto,1fr] gap-x-2 gap-y-2 items-center">
                                     <span className="text-lg font-semibold text-gray-600 whitespace-nowrap">Rimuovi:</span>
-                                    <button onClick={() => handleRemoveItem('left')} className="bg-rose-200 hover:bg-rose-300 text-black flex-1 min-w-[80px]">
-                                        Rimuovi Sinistra
-                                    </button>
-                                    <input
-                                        type="text"
-                                        placeholder="Es. 5, -3, 2x, -x, (1/2)x"
-                                        value={removeItemInput}
-                                        onChange={(e) => setRemoveItemInput(e.target.value)}
-                                        className="flex-1 p-2 border border-rose-300 rounded-md focus:ring-2 focus:ring-rose-400 mx-2"
-                                    />
-                                    <button onClick={() => handleRemoveItem('right')} className="bg-rose-200 hover:bg-rose-300 text-black flex-1 min-w-[80px]">
-                                        Rimuovi Destra
-                                    </button>
+                                    <div className="flex flex-col sm:flex-row gap-2">
+                                        <button onClick={() => handleRemoveItem('left')} className="bg-rose-200 hover:bg-rose-300 text-black flex-1 min-w-[100px]">
+                                            Rimuovi Sinistra
+                                        </button>
+                                        <input
+                                            type="text"
+                                            placeholder="Es. 5, -3, 2x, -x, (1/2)x"
+                                            value={removeItemInput}
+                                            onChange={(e) => setRemoveItemInput(e.target.value)}
+                                            className="flex-1 p-2 border border-rose-300 rounded-md focus:ring-2 focus:ring-rose-400"
+                                        />
+                                        <button onClick={() => handleRemoveItem('right')} className="bg-rose-200 hover:bg-rose-300 text-black flex-1 min-w-[100px]">
+                                            Rimuovi Destra
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         )}
@@ -1483,7 +1530,10 @@
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 {/* Applica il Principio di Addizione/Sottrazione */}
                                 <div className="control-section">
-                                    <h3>Applica il 1° Principio di Equivalenza delle Equazioni Addizione o Sottrazione</h3>
+                                    <h3 className="text-center">
+                                        Applica il 1° Principio di Equivalenza delle Equazioni
+                                        <br/>Addizione o Sottrazione
+                                    </h3>
                                     <input
                                         type="text"
                                         placeholder="Termine da aggiungere (es. +5, -2x)"
@@ -1501,7 +1551,10 @@
 
                                 {/* Applica le operazioni (Moltiplicazione/Divisione) */}
                                 <div className="control-section">
-                                    <h3>Applica il 2° Principio di Equivalenza delle Equazioni Moltiplicazione o Divisione)</h3>
+                                    <h3 className="text-center">
+                                        Applica il 2° Principio di Equivalenza delle Equazioni
+                                        <br/>Moltiplicazione o Divisione
+                                    </h3>
                                     <div className="flex flex-col items-center gap-2">
                                         <input
                                             type="text"
@@ -1549,6 +1602,16 @@
                     <button onClick={clearAll} className="mt-4 bg-gradient-to-r from-red-300 to-rose-400 hover:from-red-400 hover:to-rose-500 text-black font-bold py-3 px-6 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105">
                         Azzera Bilancia
                     </button>
+                    
+                    {/* Nuova sezione con i link per la navigazione */}
+                    <div className="mt-8 flex flex-col gap-4 justify-center items-center">
+                        <a href="paginabilancealgebriche.html" className="footer-link">
+                            &larr; Torna alle Bilance Algebriche
+                        </a>
+                        <a href="index.html" className="footer-link">
+                            &larr; Torna alla Pagina Principale delle Bilance
+                        </a>
+                    </div>
                 </div>
             );
         };
