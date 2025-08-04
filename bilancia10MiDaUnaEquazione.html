@@ -1580,21 +1580,21 @@
                         )}
                     </div>
 
-                    {/* Pulsanti di azione globale - Layout migliorato */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 mt-8 w-full max-w-6xl">
-                        <button onClick={handleRemoveOpposites} className="bg-gradient-to-r from-rose-300 to-rose-400 hover:from-rose-400 hover:to-rose-500 text-black font-bold py-4 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105">
+                    {/* Sezione pulsanti di azione globale - Layout migliorato */}
+                    <div className="flex flex-wrap justify-center gap-4 mt-8 w-full max-w-6xl">
+                        <button onClick={handleRemoveOpposites} className="bg-gradient-to-r from-rose-300 to-rose-400 hover:from-rose-400 hover:to-rose-500 text-black font-bold py-4 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105 flex-1 min-w-[180px]">
                             Elimina Coppie Opposte
                         </button>
-                        <button onClick={handleSumLikeTerms} className="bg-gradient-to-r from-pink-400 to-rose-500 hover:from-pink-500 hover:to-rose-600 text-black font-bold py-4 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105">
+                        <button onClick={handleSumLikeTerms} className="bg-gradient-to-r from-pink-400 to-rose-500 hover:from-pink-500 hover:to-rose-600 text-black font-bold py-4 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105 flex-1 min-w-[180px]">
                             Somma Algebrica di Monomi Simili
                         </button>
-                        <button onClick={calculateOperationResult} className="bg-gradient-to-r from-rose-300 to-pink-400 hover:from-rose-400 hover:to-pink-500 text-black font-bold py-4 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105">
+                        <button onClick={calculateOperationResult} className="bg-gradient-to-r from-rose-300 to-pink-400 hover:from-rose-400 hover:to-pink-500 text-black font-bold py-4 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105 flex-1 min-w-[180px]">
                             Calcola Moltiplicazione/Divisione
                         </button>
-                        <button onClick={analyzeFinalEquation} className="bg-gradient-to-r from-rose-400 to-red-500 hover:from-rose-500 hover:to-red-600 text-black font-bold py-4 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105">
+                        <button onClick={analyzeFinalEquation} className="bg-gradient-to-r from-rose-400 to-red-500 hover:from-rose-500 hover:to-red-600 text-black font-bold py-4 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105 flex-1 min-w-[180px]">
                             Analizza Soluzione Finale
                         </button>
-                        <button onClick={undoLastAction} className="bg-gradient-to-r from-red-400 to-rose-500 hover:from-red-500 hover:to-rose-600 text-black font-bold py-4 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105" disabled={history.length === 0}>
+                        <button onClick={undoLastAction} className="bg-gradient-to-r from-red-400 to-rose-500 hover:from-red-500 hover:to-rose-600 text-black font-bold py-4 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105 flex-1 min-w-[180px]" disabled={history.length === 0}>
                             Annulla Ultima Azione
                         </button>
                     </div>
