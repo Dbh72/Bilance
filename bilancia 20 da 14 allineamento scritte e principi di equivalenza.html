@@ -573,6 +573,9 @@
         const App = () => {
             const { useState, useEffect, useRef, useCallback, useMemo } = React; // De-struttura gli hook di React
 
+            // Stato per la data e l'ora attuali
+            const [currentDateTime, setCurrentDateTime] = useState('');
+
             // Un elemento zero per la visualizzazione quando i piatti sono vuoti
             const zeroItem = useMemo(() => ({ type: 'number', fractionalValue: { numerator: 0, denominator: 1, sign: 1 }, numericValue: 0, originalInputString: '0' }), []);
 
@@ -775,7 +778,6 @@
                 }
                 return finalItems;
             }, [getFractionalDisplayString]);
-
 
             // --- Logica principale e gestori di eventi ---
 
@@ -1263,6 +1265,29 @@
                 };
                 checkMathJax();
             }, []);
+            
+            // Effetto per aggiornare la data e l'ora
+            useEffect(() => {
+                const updateDateTime = () => {
+                    const now = new Date();
+                    const options = {
+                        weekday: 'long',
+                        year: 'numeric',
+                        month: '2-digit',
+                        day: '2-digit',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                        hour12: false // Formato 24 ore
+                    };
+                    const formattedDate = now.toLocaleString('it-IT', options).replace(',', '');
+                    setCurrentDateTime(formattedDate);
+                };
+
+                updateDateTime(); // Chiamata iniziale
+                const intervalId = setInterval(updateDateTime, 60000); // Aggiorna ogni minuto
+
+                return () => clearInterval(intervalId); // Pulisce l'intervallo
+            }, []);
 
 
             // --- Logica di rendering ---
@@ -1273,7 +1298,12 @@
 
             return (
                 // Sfondo con gradiente di colori vivaci, ora meno viola
-                <div className="min-h-screen bg-gradient-to-br from-sky-300 via-emerald-300 to-lime-300 flex flex-col items-center justify-center p-4 font-inter">
+                <div className="min-h-screen bg-gradient-to-br from-sky-300 via-emerald-300 to-lime-300 flex flex-col items-center justify-center p-4 font-inter relative">
+                    {/* Data e ora in alto a destra */}
+                    <div className="absolute top-4 right-4 text-gray-700 text-sm font-semibold">
+                        {currentDateTime}
+                    </div>
+
                     <h1 className="text-4xl font-extrabold text-blue-900 mb-4 text-center drop-shadow-md">
                         Bilancia Algebrica da Inserire
                     </h1>
@@ -1509,6 +1539,17 @@
                     <button onClick={clearAll} className="mt-4 bg-gradient-to-r from-indigo-800 to-blue-900 hover:from-indigo-900 hover:to-blue-950 text-white font-bold py-3 px-6 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105">
                         Azzera Bilancia
                     </button>
+                    
+                    {/* INIZIO: Sezione del footer aggiornata per una riga separata per ogni link */}
+                    <div className="flex flex-col items-center gap-2 mt-8">
+                        <div>
+                            <a href="paginabilancealgebriche.html" className="text-lg font-semibold text-blue-800 hover:text-blue-600 transition-colors duration-200">← Torna alle Bilance Algebriche</a>
+                        </div>
+                        <div>
+                            <a href="index.html" className="text-lg font-semibold text-blue-800 hover:text-blue-600 transition-colors duration-200">Torna alla Pagina Principale delle Bilance</a>
+                        </div>
+                    </div>
+                    {/* FINE: Sezione del footer aggiornata per una riga separata per ogni link */}
                 </div>
             );
         };
