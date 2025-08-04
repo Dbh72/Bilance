@@ -21,20 +21,26 @@
         .font-inter {
             font-family: 'Inter', sans-serif;
         }
+        /* Nuova sfumatura di sfondo per l'intero corpo, da rosa chiaro a rosa più scuro */
+        body {
+            @apply bg-gradient-to-br from-rose-50 to-rose-200;
+        }
+
         .balance-container {
             display: flex;
             justify-content: center;
             align-items: flex-end;
             width: 100%;
-            max-width: 900px; /* Increased max-width */
+            max-width: 900px;
             height: 280px;
             position: relative;
             margin-bottom: 4rem;
         }
+        /* Colori aggiornati per il perno della bilancia */
         .pivot-base {
             width: 100px;
             height: 30px;
-            background-color: #8B4513;
+            background-color: #A0522D; /* Colore marrone */
             position: absolute;
             bottom: 0;
             left: 50%;
@@ -46,7 +52,7 @@
         .pivot {
             width: 40px;
             height: 180px;
-            background-color: #A0522D;
+            background-color: #D2691E; /* Colore marrone scuro */
             position: absolute;
             bottom: 30px;
             left: 50%;
@@ -58,7 +64,7 @@
         .beam {
             width: 100%;
             height: 30px;
-            background-color: #694a2b;
+            background-color: #CD853F; /* Colore marrone chiaro */
             position: absolute;
             top: 55px;
             left: 0;
@@ -88,17 +94,18 @@
         }
 
         .plate-holder {
-            width: 280px; /* Increased width */
+            width: 280px;
             height: 180px;
             position: relative;
             display: flex;
             justify-content: center;
             align-items: flex-end;
         }
+        /* Colore del piatto aggiornato a una tonalità crema chiara */
         .plate {
-            width: 260px; /* Increased width */
+            width: 260px;
             min-height: 120px;
-            background-color: #d2b48c;
+            background-color: #FDF9F3; /* Colore crema/panna */
             border: 4px solid #8B4513;
             border-radius: 20px;
             display: flex;
@@ -110,57 +117,62 @@
             transition: all 0.3s ease;
         }
         .item-block {
-            /* Removed fixed width/height to allow content-based sizing */
-            min-width: 60px; /* Slightly larger min-width for items */
-            min-height: 50px; /* Minimum height */
-            max-width: 100%; /* Allow it to grow up to plate width */
-            flex-grow: 1; /* Allow it to grow if space available */
+            min-width: 60px;
+            min-height: 50px;
+            max-width: 100%;
+            flex-grow: 1;
             display: flex;
-            flex-direction: column; /* Allow content to stack */
+            flex-direction: column;
             justify-content: center;
             align-items: center;
-            color: black; /* Changed from white to black */
+            color: black;
             font-weight: 700;
-            /* font-size: 1.5rem; Removed fixed font size */
             border-radius: 8px;
             margin: 5px;
             box-shadow: 0 3px 6px rgba(0,0,0,0.2);
-            position: relative; /* For absolute positioning of visual cues */
-            padding: 5px; /* Add some padding for content */
-            overflow: hidden; /* Hide overflow if text is too long */
-            word-break: break-word; /* Break long words */
+            position: relative;
+            padding: 5px;
+            overflow: hidden;
+            word-break: break-word;
         }
+        /* Colori aggiornati per i termini, tutti nella tonalità del rosa */
         .item-block.positive {
-            background-color: #2563EB; /* Changed from green to blue-600 */
+            background-color: #F8BBD0; /* Rosa chiaro */
         }
         .item-block.negative {
-            background-color: #F44336;
+            background-color: #E91E63; /* Rosa scuro/Fucsia */
+            color: white; /* Per una migliore leggibilità */
         }
         .item-block.variable {
-            background-color: #FFC107;
+            background-color: #FFECB3; /* Giallo chiaro per contrasto */
         }
         .control-section {
-            @apply bg-white p-6 rounded-xl shadow-lg mb-6 w-full max-w-md;
+            @apply bg-rose-50 p-6 rounded-xl shadow-lg mb-6 w-full max-w-md;
         }
         .control-section h3 {
             @apply text-xl font-bold text-gray-700 mb-4;
         }
         .control-section input {
-            @apply p-2 border border-gray-300 rounded-md w-full mb-3 focus:ring-2 focus:ring-blue-400;
+            @apply p-2 border border-rose-300 rounded-md w-full mb-3 focus:ring-2 focus:ring-rose-400;
         }
+        /* Colori dei pulsanti aggiornati con sfumature di rosa/rosso */
         .control-section button {
-            @apply bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105;
+            @apply bg-rose-200 hover:bg-rose-300 text-black font-bold py-2 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105;
         }
         .control-section button:disabled {
             @apply bg-gray-400 cursor-not-allowed;
         }
+        /* Stile specifico per i pulsanti Moltiplica/Dividi */
+        .control-section .grid button {
+            @apply bg-rose-200 hover:bg-rose-300 text-black;
+        }
 
         /* General styling for fraction display */
         .flex-col .text-sm {
-            font-size: 0.9rem; /* Slightly smaller for fractions */
+            font-size: 0.9rem;
         }
-        .flex-col .text-black { /* This class is now overridden by .item-block color: black */
-            white-space: nowrap; /* Prevent fraction parts from wrapping */
+        .flex-col .text-black {
+            white-space: nowrap;
         }
     </style>
 </head>
@@ -168,9 +180,9 @@
     <div id="root"></div>
 
     <script type="text/babel">
-        // --- Utility Functions for Fraction Arithmetic ---
+        // --- Funzioni di Utilità per l'Aritmetica delle Frazioni ---
 
-        // Greatest Common Divisor (GCD) using Euclidean algorithm
+        // Massimo Comun Divisore (MCD) usando l'algoritmo di Euclide
         const gcd = (a, b) => {
             a = Math.abs(a);
             b = Math.abs(b);
@@ -180,7 +192,7 @@
             return a;
         };
 
-        // Simplify a fraction {numerator, denominator, sign}
+        // Semplifica una frazione {numeratore, denominatore, segno}
         const simplifyFraction = (fraction) => {
             if (fraction.numerator === 0) {
                 return { numerator: 0, denominator: 1, sign: 1 };
@@ -189,13 +201,13 @@
             return {
                 numerator: fraction.numerator / common,
                 denominator: fraction.denominator / common,
-                sign: fraction.sign // Keep the original sign
+                sign: fraction.sign // Mantieni il segno originale
             };
         };
 
-        // Utility function to add two fractions
+        // Funzione di utilità per sommare due frazioni
         const addFractions = (f1, f2) => {
-            // Ensure fractions are in a consistent format (positive numerator/denominator, sign applied externally)
+            // Assicura che le frazioni siano in un formato consistente (numeratore/denominatore positivi, segno applicato esternamente)
             const n1 = f1.numerator * f1.sign;
             const d1 = f1.denominator;
             const n2 = f2.numerator * f2.sign;
@@ -210,12 +222,12 @@
             return simplified;
         };
 
-        // Utility function to divide two fractions
+        // Funzione di utilità per dividere due frazioni
         const divideFractions = (f1, f2) => {
             if (f2.numerator === 0) {
-                // This case should ideally be handled before calling divideFractions for the solution.
-                // For now, return a special value or throw an error.
-                return { error: 'Division by zero in fraction division.' };
+                // Questo caso dovrebbe essere gestito prima di chiamare divideFractions per la soluzione.
+                // Per ora, restituisce un valore speciale o lancia un errore.
+                return { error: 'Divisione per zero nella divisione di frazioni.' };
             }
             const n1 = f1.numerator * f1.sign;
             const d1 = f1.denominator;
@@ -227,22 +239,22 @@
 
             let sign = 1;
             if (num < 0) { sign = -1; }
-            if (den < 0) { sign *= -1; } // Adjust sign if denominator is negative
+            if (den < 0) { sign *= -1; } // Regola il segno se il denominatore è negativo
             const simplified = simplifyFraction({ numerator: Math.abs(num), denominator: Math.abs(den), sign: sign });
             return simplified;
         };
 
-        // Utility function to get a formatted string for a fractional value
+        // Funzione di utilità per ottenere una stringa formattata per un valore frazionario
         const getFractionalDisplayString = (fraction) => {
             if (fraction.denominator === 1) {
                 return String(fraction.numerator * fraction.sign);
             }
-            // Return plain text format for fractions
+            // Restituisci il formato di testo semplice per le frazioni
             return `${fraction.sign === -1 ? '-' : ''}${fraction.numerator}/${fraction.denominator}`;
         };
 
-        // Utility function to parse numbers and fractions, returning fractional representation
-        // MOVED OUTSIDE OF APP COMPONENT FOR GLOBAL ACCESSIBILITY
+        // Funzione di utilità per analizzare numeri e frazioni, restituendo la rappresentazione frazionaria
+        // SPOSTATA FUORI DAL COMPONENTE APP PER L'ACCESSIBILITÀ GLOBALE
         const parseFractionOrNumber = i => {
             let r = String(i).trim();
             let oS = 1; // Original Sign
@@ -254,7 +266,7 @@
                 }
             }
 
-            // Check for explicit leading sign
+            // Controlla il segno iniziale esplicito
             if (r.startsWith('-')) {
                 oS = -1;
                 r = r.substring(1).trim();
@@ -262,8 +274,8 @@
                 r = r.substring(1).trim();
             }
 
-            let b = 0; // Balance for parentheses
-            let tLS = []; // Trailing Slash Indices
+            let b = 0; // Bilanciamento per le parentesi
+            let tLS = []; // Indici della barra di divisione finale
 
             for (let k = 0; k < r.length; k++) {
                 if (r[k] === '(') b++;
@@ -279,16 +291,16 @@
                 }
             }
 
-            let mSI = tLS.length === 1 ? tLS[0] : -1; // Main Slash Index
-            let fFV; // Final Fractional Value
-            let fNV; // Final Numeric Value
-            let displayObject; // Object for display info
+            let mSI = tLS.length === 1 ? tLS[0] : -1; // Indice della barra principale
+            let fFV; // Valore Frazionario Finale
+            let fNV; // Valore Numerico Finale
+            let displayObject; // Oggetto per le informazioni di visualizzazione
 
             if (mSI !== -1) {
-                let numeratorString = r.substring(0, mSI).trim(); // Numerator String
-                let denominatorString = r.substring(mSI + 1).trim(); // Denominator String
+                let numeratorString = r.substring(0, mSI).trim(); // Stringa del Numeratore
+                let denominatorString = r.substring(mSI + 1).trim(); // Stringa del Denominatore
 
-                // RECURSIVE CALLS for numerator and denominator parts
+                // CHIAMATE RICORSIVE per le parti del numeratore e del denominatore
                 let parsedNumerator = parseFractionOrNumber(numeratorString);
                 if (parsedNumerator.error) return { error: parsedNumerator.error };
 
@@ -309,44 +321,44 @@
                 fFV = simplifyFraction(combinedFraction);
                 fFV.sign *= oS;
                 fNV = (fFV.numerator / fFV.denominator) * fFV.sign;
-                displayObject = { type: 'fraction', ...fFV }; // Use simplified fraction for display
+                displayObject = { type: 'fraction', ...fFV }; // Usa la frazione semplificata per la visualizzazione
             } else if (r.startsWith('(') && r.endsWith(')')) {
-                let iC = r.slice(1, -1).trim(); // Inner Content
+                let iC = r.slice(1, -1).trim(); // Contenuto Interno
                 if (iC === '') {
                     return {
                         error: `Contenuto vuoto all'interno delle parentesi: "${i}".`
                     }
                 }
-                const pI = parseFractionOrNumber(iC); // Parsed Inner
+                const pI = parseFractionOrNumber(iC); // Interno Analizzato
                 if (pI.error) return {
                     error: pI.error
                 };
                 fFV = pI.fractionalValue;
                 fFV.sign *= oS;
                 fNV = (fFV.numerator / fFV.denominator) * fFV.sign;
-                displayObject = pI.display; // Inherit display from inner content
+                displayObject = pI.display; // Eredita la visualizzazione dal contenuto interno
                 if (displayObject.type === 'fraction') {
-                    displayObject.sign = fFV.sign; // Ensure sign is correct
+                    displayObject.sign = fFV.sign; // Assicura che il segno sia corretto
                 } else {
                     displayObject.value = fNV;
                 }
             } else {
-                const sNR = /^(?:[-+]?\d+(?:\.\d*)?|\.\d+)$/; // Simple Number Regex, now allows leading sign
+                const sNR = /^(?:[-+]?\d+(?:\.\d*)?|\.\d+)$/; // Regex per numero semplice, ora consente il segno iniziale
                 if (!r.match(sNR)) {
                     return {
                         error: `Formato numerico non valido: "${i}".`
                     }
                 }
-                const nV = parseFloat(r); // Numeric Value
+                const nV = parseFloat(r); // Valore Numerico
                 if (isNaN(nV)) {
                     return {
                         error: `Errore interno di parsing per "${i}".`
                     }
                 }
-                let n = nV; // Numerator
-                let d = 1; // Denominator
+                let n = nV; // Numeratore
+                let d = 1; // Denominatore
                 if (nV % 1 !== 0) {
-                    const dP = (nV.toString().split('.')[1] || '').length; // Decimal Places
+                    const dP = (nV.toString().split('.')[1] || '').length; // Cifre Decimali
                     d = Math.pow(10, dP);
                     n = Math.round(nV * d)
                 }
@@ -360,7 +372,7 @@
                 displayObject = { type: 'number', value: fNV };
             }
 
-            let dS; // Display String
+            let dS; // Stringa di Visualizzazione
             if (fFV.denominator === 1) {
                 dS = String(fFV.numerator * fFV.sign)
             } else {
@@ -380,10 +392,10 @@
             }
         };
 
-        // New helper function to parse a single monomial string (e.g., "5x", "-3", "-(2/3)x", "(5)/4")
-        // MOVED OUTSIDE OF APP COMPONENT FOR GLOBAL ACCESSIBILITY
+        // Nuova funzione di aiuto per analizzare una singola stringa di monomio (es. "5x", "-3", "-(2/3)x", "(5)/4")
+        // SPOSTATA FUORI DAL COMPONENTE APP PER L'ACCESSIBILITÀ GLOBALE
         const parseMonomialString = (monomialString) => {
-            const fullOriginalInput = monomialString; // Store the original for display
+            const fullOriginalInput = monomialString; // Memorizza l'originale per la visualizzazione
             let trimmedMonomial = monomialString.trim();
             if (trimmedMonomial === '') {
                 throw new Error("Termine monomio vuoto.");
@@ -391,50 +403,49 @@
 
             let effectiveSign = 1;
 
-            // Handle leading sign for the whole monomial
+            // Gestisci il segno iniziale per l'intero monomio
             if (trimmedMonomial.startsWith('-')) {
                 effectiveSign = -1;
                 trimmedMonomial = trimmedMonomial.substring(1).trim();
             } else if (trimmedMonomial.startsWith('+')) {
-                effectiveSign = 1;
                 trimmedMonomial = trimmedMonomial.substring(1).trim();
             }
 
             let coefficientString;
             let hasX = false;
 
-            // Check if it ends with 'x' (case-insensitive)
+            // Controlla se termina con 'x' (insensibile alle maiuscole)
             const xMatch = trimmedMonomial.match(/^(.*)([xX])$/i);
             if (xMatch) {
                 hasX = true;
-                coefficientString = xMatch[1].trim(); // Everything before 'x'
-                if (coefficientString === '') { // Case like "x" or "-x" (after sign removal)
+                coefficientString = xMatch[1].trim(); // Tutto ciò che precede 'x'
+                if (coefficientString === '') { // Caso come "x" o "-x" (dopo la rimozione del segno)
                     coefficientString = '1';
                 }
             } else {
                 coefficientString = trimmedMonomial;
             }
 
-            // --- AMBIGUITY CHECK FOR N/Mx ---
-            // If it's an X term and the coefficient string contains a '/'
-            // AND it's not already explicitly parenthesized (e.g., "(1/2)"),
-            // then it's ambiguous.
-            // This check is primarily for user input validation. Generated strings will be correct.
+            // --- CONTROLLO DI AMBIGUITÀ PER N/Mx ---
+            // Se è un termine X e la stringa del coefficiente contiene un '/',
+            // E non è già esplicitamente tra parentesi (es. "(1/2)"),
+            // allora è ambiguo.
+            // Questo controllo è principalmente per la validazione dell'input dell'utente. Le stringhe generate saranno corrette.
             if (hasX && coefficientString.includes('/') && !(coefficientString.startsWith('(') && coefficientString.endsWith(')'))) {
                 throw new Error(`Ambiguità: Il termine '${fullOriginalInput}' contiene una moltiplicazione implicita ambigua come 'N/Mx'. Usa le parentesi per chiarire: '(N/M)*x' o 'N/(M*x)'.`);
             }
-            // --- END AMBIGUITY CHECK ---
+            // --- FINE CONTROLLO DI AMBIGUITÀ ---
 
 
-            // Now, parse the coefficientString which might be a number, a simple fraction, or a parenthesized fraction
-            const parsedCoefficient = parseFractionOrNumber(coefficientString); // Now calls the globally accessible function
+            // Ora, analizza la stringa del coefficiente che potrebbe essere un numero, una frazione semplice o una frazione tra parentesi
+            const parsedCoefficient = parseFractionOrNumber(coefficientString); // Ora chiama la funzione accessibile globalmente
 
             if (parsedCoefficient.error) {
                 throw new Error(`Formato coefficiente non valido per "${coefficientString}" (parte di "${fullOriginalInput}"): ${parsedCoefficient.error}`);
             }
 
             let finalFractionalValue = parsedCoefficient.fractionalValue;
-            finalFractionalValue.sign *= effectiveSign; // Apply the overall sign
+            finalFractionalValue.sign *= effectiveSign; // Applica il segno complessivo
 
             const finalNumericValue = (finalFractionalValue.numerator / finalFractionalValue.denominator) * finalFractionalValue.sign;
 
@@ -442,17 +453,17 @@
                 type: hasX ? 'variable' : 'number',
                 fractionalValue: finalFractionalValue,
                 numericValue: finalNumericValue,
-                originalInputString: fullOriginalInput, // Keep the original string for display
-                display: parsedCoefficient.display // Keep original display info if needed
+                originalInputString: fullOriginalInput, // Mantieni la stringa originale per la visualizzazione
+                display: parsedCoefficient.display // Mantieni le informazioni di visualizzazione originali se necessarie
             };
         };
 
 
-        // Component to render a number or fraction consistently
+        // Componente per renderizzare un numero o una frazione in modo coerente
         const ItemDisplay = ({ item }) => {
-            // Render the main value/coefficient
+            // Renderizza il valore principale/coefficiente
             const renderMainValue = () => {
-                // Display the original input string directly
+                // Visualizza la stringa di input originale direttamente
                 return (
                     <span className="text-xl font-bold">
                         {item.originalInputString}
@@ -460,24 +471,24 @@
                 );
             };
 
-            // Render the visual cue for operations
+            // Renderizza il segnale visivo per le operazioni
             const renderVisualCue = () => {
                 if (!item.visualCue) return null;
 
-                // item.visualCue.operand is now the original input string
+                // item.visualCue.operand è ora la stringa di input originale
                 const operandDisplayString = item.visualCue.operand;
 
                 if (item.visualCue.type === 'divide') {
                     return (
                         <div className="flex flex-col items-center justify-center text-sm mt-1">
                             <div className="w-full border-t border-black"></div>
-                            <span className="text-black">{operandDisplayString}</span> {/* Use the string directly */}
+                            <span className="text-black">{operandDisplayString}</span> {/* Usa la stringa direttamente */}
                         </div>
                     );
                 } else if (item.visualCue.type === 'multiply') {
                     return (
                         <span className="text-black text-sm mt-1">
-                            &middot;&nbsp;{operandDisplayString} {/* Use the string directly */}
+                            &middot;&nbsp;{operandDisplayString} {/* Usa la stringa direttamente */}
                         </span>
                     );
                 }
@@ -494,7 +505,7 @@
             );
         };
 
-        // New component for rendering MathJax content
+        // Nuovo componente per il rendering del contenuto MathJax
         const MathJaxDisplay = ({ text }) => {
             const ref = React.useRef(null);
             
@@ -511,85 +522,84 @@
         };
 
 
-        // Function to generate a random integer or fraction string (can be zero)
+        // Funzione per generare una stringa di coefficiente casuale intero o frazionario (può essere zero)
         const generateRandomCoefficient = () => {
-            const isFraction = Math.random() < 0.5; // 50% chance for a fraction
+            const isFraction = Math.random() < 0.5; // 50% di probabilità per una frazione
             if (isFraction) {
-                let num = Math.floor(Math.random() * 21) - 10; // Numerator between -10 and 10
-                let den = Math.floor(Math.random() * 9) + 2; // Denominator between 2 and 10
+                let num = Math.floor(Math.random() * 21) - 10; // Numeratore tra -10 e 10
+                let den = Math.floor(Math.random() * 9) + 2; // Denominatore tra 2 e 10
                 const common = gcd(num, den);
                 num /= common;
                 den /= common;
-                if (den < 0) { // Ensure denominator is positive
+                if (den < 0) { // Assicura che il denominatore sia positivo
                     num = -num;
                     den = -den;
                 }
-                // Return it wrapped in parentheses if it's a fraction.
-                // This is the raw string for the coefficient, which formatCoeffForDisplay will then use.
+                // Restituisce la stringa grezza per il coefficiente, che formatCoeffForDisplay userà
                 return `${num}/${den}`;
             } else {
-                let num = Math.floor(Math.random() * 21) - 10; // Integer between -10 and 10
+                let num = Math.floor(Math.random() * 21) - 10; // Intero tra -10 e 10
                 return String(num);
             }
         };
 
-        // Function to generate a random non-zero integer or fraction string
+        // Funzione per generare una stringa di coefficiente casuale non zero intero o frazionario
         const generateRandomNonZeroCoefficient = () => {
             let coeff;
             do {
                 coeff = generateRandomCoefficient();
-                const parsed = parseFractionOrNumber(coeff); // Parse without removing outer parens here
-                if (parsed.error || Math.abs(parsed.numericValue) < 1e-9) { // Check for parsing errors or effective zero
-                    coeff = "0"; // Force retry
+                const parsed = parseFractionOrNumber(coeff); // Analizza senza rimuovere le parentesi esterne qui
+                if (parsed.error || Math.abs(parsed.numericValue) < 1e-9) { // Controlla errori di parsing o zero effettivo
+                    coeff = "0"; // Forza il riavvio
                 }
             } while (coeff === "0");
             return coeff;
         };
 
 
-        // Main App component
+        // Componente principale dell'App
         const App = () => {
-            const { useState, useEffect, useRef, useCallback, useMemo } = React; // Destructure React hooks
+            const { useState, useEffect, useRef, useCallback, useMemo } = React; // Destruttura gli hook di React
 
-            // A zero item for display when plates are empty
+            // Un elemento zero per la visualizzazione quando i piatti sono vuoti
             const zeroItem = useMemo(() => ({ type: 'number', fractionalValue: { numerator: 0, denominator: 1, sign: 1 }, numericValue: 0, originalInputString: '0' }), []);
 
-            // State for items on the left side of the balance
+            // Stato per gli elementi sul lato sinistro della bilancia
             const [leftItems, setLeftItems] = useState([]);
-            // State for items on the right side of the balance
+            // Stato per gli elementi sul lato destro della bilancia
             const [rightItems, setRightItems] = useState([]);
-            // State to store history for undo functionality
+            // Stato per memorizzare la cronologia per la funzionalità di annullamento
             const [history, setHistory] = useState([]);
-            // State to store any messages to the user (e.g., balance status)
+            // Stato per memorizzare i messaggi per l'utente (es. stato della bilancia)
             const [message, setMessage] = useState('Benvenuto! Genera un\'equazione per iniziare.');
-            // State to store the solved equation message (to be displayed as overlay)
+            // Stato per memorizzare il messaggio dell'equazione risolta (da visualizzare come sovrapposizione)
             const [solvedMessage, setSolvedMessage] = useState(null);
-            // State for system messages (errors, warnings)
+            // Stato per i messaggi di sistema (errori, avvisi)
             const [systemMessage, setSystemMessage] = useState(null);
-            // State for the value to be added/removed (for number blocks)
+            // Stato per il valore da aggiungere/rimuovere (per i blocchi numerici)
             const [addNumberValue, setAddNumberValue] = useState('');
-            // State for the X term to be added manually (e.g., "2x", "-x")
+            // Stato per il termine X da aggiungere manualmente (es. "2x", "-x")
             const [addXTermValue, setAddXTermValue] = useState('');
-            // State for the value to be used in operations (add, subtract, multiply, divide)
+            // Stato per il valore da utilizzare nelle operazioni (somma, sottrazione, moltiplicazione, divisione)
             const [opValue, setOpOpValue] = useState('');
-            // State for the term to be applied to both sides for addition/sottraction principle
+            // Stato per il termine da applicare a entrambi i lati per il principio di addizione/sottrazione
             const [applyPrincipleTerm, setApplyPrincipleTerm] = useState('');
-            // State for the item to be removed by specific value/term
+            // Stato per l'elemento da rimuovere per valore/termine specifico
             const [removeItemInput, setRemoveItemInput] = useState('');
-            // State to control the tilt of the balance for visual feedback
-            const [tilt, setTilt] = useState(0); // -10 for left heavy, 10 for right heavy, 0 for balanced
-            // State for the equation input string (for reference only)
+            // Stato per controllare l'inclinazione della bilancia per il feedback visivo
+            const [tilt, setTilt] = useState(0); // -10 per sinistra pesante, 10 per destra pesante, 0 per bilanciato
+            // Stato per la stringa di input dell'equazione (solo per riferimento)
             const [equationInput, setEquationInput] = useState('');
-            // State to track if MathJax has loaded
+            // Stato per tenere traccia del caricamento di MathJax
             const [isMathJaxLoaded, setIsMathJaxLoaded] = useState(false);
-            // State to track the count for equation generation type
+            // Stato per tenere traccia del conteggio per il tipo di generazione dell'equazione
             const [generationCount, setGenerationCount] = useState(0);
 
-            // Ref for the beam element to apply rotation
+            // Riferimento all'elemento del braccio per applicare la rotazione
             const beamRef = useRef(null);
 
 
-            // --- Helper Functions (Memoized for performance) ---
+            // --- Funzioni di aiuto (Memorizzate per le prestazioni) ---
 
             const fractionalToString = useCallback((frac) => {
                 return getFractionalDisplayString(frac);
@@ -648,12 +658,12 @@
 
                         const newNumericValue = (newFractionalValue.numerator / newFractionalValue.denominator) * newFractionalValue.sign;
 
-                        // Update originalInputString to reflect the new calculated value
+                        // Aggiorna originalInputString per riflettere il nuovo valore calcolato
                         let newOriginalInputString;
                         if (item.type === 'number') {
                             newOriginalInputString = getFractionalDisplayString(newFractionalValue);
                         } else { // type === 'variable'
-                            // Ensure proper formatting for x-terms after calculation
+                            // Assicura una formattazione corretta per i termini x dopo il calcolo
                             if (newFractionalValue.denominator !== 1 || newNumericValue < 0) {
                                 newOriginalInputString = `(${getFractionalDisplayString(newFractionalValue)})x`;
                             } else if (newNumericValue === 1) {
@@ -669,7 +679,7 @@
                             ...item,
                             fractionalValue: newFractionalValue,
                             numericValue: newNumericValue,
-                            originalInputString: newOriginalInputString, // Update this
+                            originalInputString: newOriginalInputString, // Aggiorna questo
                             visualCue: null
                         };
                     }
@@ -734,7 +744,7 @@
                 if (sumXFractional.numerator !== 0) {
                     const numericVal = (sumXFractional.numerator / sumXFractional.denominator) * sumXFractional.sign;
                     let originalInputStr;
-                    // Ensure proper formatting for x-terms after summing
+                    // Assicura una formattazione corretta per i termini x dopo la somma
                     if (sumXFractional.denominator !== 1 || numericVal < 0) {
                         originalInputStr = `(${getFractionalDisplayString(sumXFractional)})x`;
                     } else if (numericVal === 1) {
@@ -755,12 +765,12 @@
             }, [getFractionalDisplayString]);
 
 
-            // --- Core Logic & Event Handlers ---
+            // --- Logica principale e gestori di eventi ---
 
             const saveState = useCallback(() => {
                 setHistory(prevHistory => [...prevHistory, { left: leftItems, right: rightItems }]);
-                setSolvedMessage(null); // Clear solved message on any action that modifies the balance
-                setSystemMessage(null); // Clear system message
+                setSolvedMessage(null); // Pulisci il messaggio di risoluzione su qualsiasi azione che modifica la bilancia
+                setSystemMessage(null); // Pulisci il messaggio di sistema
             }, [leftItems, rightItems]);
 
             const undoLastAction = useCallback(() => {
@@ -768,21 +778,21 @@
                     const previousState = history[history.length - 1];
                     setLeftItems(previousState.left);
                     setRightItems(previousState.right);
-                    setHistory(prevHistory => prevHistory.slice(0, -1)); // Remove the last state
+                    setHistory(prevHistory => prevHistory.slice(0, -1)); // Rimuovi l'ultimo stato
                     setSystemMessage(null);
                     setMessage('Ultima azione annullata.');
-                    setSolvedMessage(null); // Clear solved message on undo
+                    setSolvedMessage(null); // Pulisci il messaggio di risoluzione su annullamento
                 } else {
                     setSystemMessage('Nessuna azione da annullare.');
                 }
             }, [history]);
 
             const addItemToSide = useCallback((side, item) => {
-                saveState(); // Save current state before modification
+                saveState(); // Salva lo stato attuale prima della modifica
                 if (side === 'left') {
                     setLeftItems(prevItems => {
                         const newItems = [...prevItems];
-                        // Remove any existing zeroItem if other items are being added
+                        // Rimuovi l'eventuale zeroItem se vengono aggiunti altri elementi
                         const filteredItems = newItems.filter(i => !(i.type === 'number' && i.numericValue === 0 && newItems.length > 0));
                         filteredItems.push(item);
                         return filteredItems;
@@ -798,18 +808,18 @@
                 setSystemMessage(null);
             }, [saveState]);
 
-            const handleAddNumber = useCallback((side) => {
+            const handleAddNumber = useCallback(() => {
                 const parsed = parseFractionOrNumber(addNumberValue);
                 if (parsed.error) {
                     setSystemMessage(parsed.error + '. Controlla che i valori frazionari siano scritti correttamente.');
                     return;
                 }
-                addItemToSide(side, { ...parsed, type: 'number' });
+                addItemToSide('left', { ...parsed, type: 'number' });
                 setMessage('Numero aggiunto con successo.');
                 setAddNumberValue('');
             }, [addNumberValue, addItemToSide, setSystemMessage, setMessage, setAddNumberValue]);
 
-            const handleAddXTerm = useCallback((side) => {
+            const handleAddXTerm = useCallback(() => {
                 let inputString = addXTermValue.trim();
                 if (inputString === '') {
                     setSystemMessage('Per favor, inserisci un termine X (es. 2x, -x, (1/2)x, -(2/3)x).');
@@ -821,7 +831,7 @@
                         setSystemMessage('L\'input deve essere un termine X. Controlla il formato.');
                         return;
                     }
-                    addItemToSide(side, itemToAdd);
+                    addItemToSide('left', itemToAdd);
                     setMessage('Termine X aggiunto con successo.');
                     setAddXTermValue('');
                 } catch (error) {
@@ -853,9 +863,9 @@
 
                     if (removed) {
                         if (side === 'left') {
-                            setLeftItems(newItems.length === 0 ? [] : newItems); // Revert to empty array
+                            setLeftItems(newItems.length === 0 ? [] : newItems); // Ritorna a un array vuoto
                         } else {
-                            setRightItems(newItems.length === 0 ? [] : newItems); // Revert to empty array
+                            setRightItems(newItems.length === 0 ? [] : newItems); // Ritorna a un array vuoto
                         }
                         setSystemMessage(null);
                         setMessage(`Elemento "${itemString}" rimosso dal lato ${side === 'left' ? 'sinistro' : 'destro'}.`);
@@ -868,7 +878,7 @@
                 }
             }, [removeItemInput, leftItems, rightItems, saveState, fractionalToString, setLeftItems, setRightItems, setSystemMessage, setMessage, setRemoveItemInput]);
 
-            // Modified applyOperation to only set the visual cue
+            // Funzione modificata per applicare l'operazione per impostare solo il segnale visivo
             const applyOperation = useCallback((operationType) => {
                 const opString = opValue.trim();
                 let operandFractionalValue;
@@ -879,7 +889,7 @@
                     return;
                 }
                 operandFractionalValue = parsedOp.fractionalValue;
-                const visualOperandDisplay = parsedOp.originalInputString; // Use original string for visual cue
+                const visualOperandDisplay = parsedOp.originalInputString; // Usa la stringa originale per il segnale visivo
 
 
                 if (operationType === 'divide' && operandFractionalValue.numerator === 0) {
@@ -887,7 +897,7 @@
                     return;
                 }
 
-                saveState(); // Save state *before* applying the visual cue
+                saveState(); // Salva lo stato *prima* di applicare il segnale visivo
 
                 const updateItemsWithVisualCue = (currentItems) => {
                     return currentItems.map(item => {
@@ -916,7 +926,7 @@
             const applyAdditionSubtractionPrinciple = useCallback(() => {
                 const termString = applyPrincipleTerm.trim();
                 if (termString === '') {
-                    setSystemMessage('Per favor, inserisci un termine (es. +5, -2x, (1/2)x, -(2/3)x).');
+                    setSystemMessage('Per favor, inserisci un termine (es. +5, -2x).');
                     return;
                 }
                 try {
@@ -925,21 +935,21 @@
 
                     const addWithProximity = (currentItems, newItem) => {
                         const newItems = [...currentItems];
-                        // Filter out any zero item if other items exist
+                        // Filtra l'eventuale elemento zero se esistono altri elementi
                         const filteredItems = newItems.filter(i => !(i.type === 'number' && i.numericValue === 0 && newItems.length > 1));
 
                         let inserted = false;
                         for (let i = 0; i < filteredItems.length; i++) {
                             const existingItem = filteredItems[i];
-                            // Check for opposite by type and value (approximate comparison for floats)
+                            // Controlla l'opposto per tipo e valore (confronto approssimato per i float)
                             if (existingItem.type === newItem.type && Math.abs(existingItem.numericValue + newItem.numericValue) < 1e-9) {
-                                filteredItems.splice(i + 1, 0, { ...newItem }); // Insert after the opposite
+                                filteredItems.splice(i + 1, 0, { ...newItem }); // Inserisci dopo l'opposto
                                 inserted = true;
                                 break;
                             }
                         }
                         if (!inserted) {
-                            filteredItems.push({ ...newItem }); // If no opposite, just add to end
+                            filteredItems.push({ ...newItem }); // Se non c'è l'opposto, aggiungi semplicemente alla fine
                         }
                         return filteredItems;
                     };
@@ -982,7 +992,7 @@
                 const newLeftItems = sumLikeTerms(leftItems);
                 const newRightItems = sumLikeTerms(rightItems);
 
-                // Check if any actual change occurred to avoid unnecessary messages/state updates
+                // Controlla se è avvenuto un cambiamento effettivo per evitare messaggi/aggiornamenti di stato non necessari
                 const leftChanged = JSON.stringify(newLeftItems.map(i => ({ val: fractionalToString(i.fractionalValue), type: i.type }))) !== JSON.stringify(leftItems.map(i => ({ val: fractionalToString(i.fractionalValue), type: i.type })));
                 const rightChanged = JSON.stringify(newRightItems.map(i => ({ val: fractionalToString(i.fractionalValue), type: i.type }))) !== JSON.stringify(rightItems.map(i => ({ val: fractionalToString(i.fractionalValue), type: i.type })));
 
@@ -1016,7 +1026,7 @@
 
             const analyzeFinalEquation = useCallback(() => {
                 setSystemMessage(null);
-                // Clear solved message initially to ensure it only appears if analysis succeeds
+                // Pulisci inizialmente il messaggio di risoluzione per assicurarti che appaia solo se l'analisi ha successo
                 setSolvedMessage(null); 
 
                 const leftComponents = getSummedComponents(leftItems);
@@ -1070,7 +1080,7 @@
                     analysisType = 'indeterminate';
                     setSystemMessage(null);
                 } else {
-                    // This case should ideally not be reached if the above conditions cover all possibilities
+                    // Questo caso non dovrebbe essere raggiunto se le condizioni precedenti coprono tutte le possibilità
                     setSolvedMessage(null);
                 }
 
@@ -1093,8 +1103,8 @@
                         </p>
                     );
                 } else if (analysisType === 'error') {
-                    // Message already set by setSystemMessage above
-                    setSolvedMessage(null); // Ensure no solved message if there's an error
+                    // Il messaggio è già impostato da setSystemMessage sopra
+                    setSolvedMessage(null); // Assicurati che non ci sia un messaggio di risoluzione in caso di errore
                 }
             }, [leftItems, rightItems, getSummedComponents, setSolvedMessage, setSystemMessage]);
 
@@ -1103,30 +1113,30 @@
                 let eqString = "";
                 let a_coeff, b_coeff, c_coeff, d_coeff;
 
-                // Helper to format a coefficient string for display in the equation string
+                // Funzione di aiuto per formattare una stringa di coefficiente per la visualizzazione nella stringa dell'equazione
                 const formatCoeffForDisplay = (coeffString, isXTerm = false) => {
                     const parsed = parseFractionOrNumber(coeffString);
                     if (parsed.error) return coeffString; // Fallback
 
-                    let display = parsed.displayString; // e.g., "5", "-2", "1/2", "-3/4"
+                    let display = parsed.displayString; // es. "5", "-2", "1/2", "-3/4"
 
                     if (isXTerm) {
-                        // Handle '1x' and '-1x' cases for cleaner display
+                        // Gestisci i casi '1x' e '-1x' per una visualizzazione più pulita
                         if (parsed.numericValue === 1) return 'x';
                         if (parsed.numericValue === -1) return '-x';
 
-                        // If it's a fraction or a negative number, wrap the coefficient in parentheses
+                        // Se è una frazione o un numero negativo, avvolgi il coefficiente tra parentesi
                         if (parsed.fractionalValue.denominator !== 1 || parsed.numericValue < 0) {
                             display = `(${display})`;
                         }
                         return `${display}x`;
                     } else {
-                        // For constant terms, return with its sign.
+                        // Per i termini costanti, restituiscili con il loro segno.
                         return display;
                     }
                 };
 
-                // Helper to determine if a term needs a '+' prefix and format it
+                // Funzione di aiuto per determinare se un termine necessita di un prefisso '+' e formattarlo
                 const getTermWithSign = (coeffString, isXTerm = false, isFirstTerm = false) => {
                     const parsed = parseFractionOrNumber(coeffString);
                     if (parsed.error) return coeffString; // Fallback
@@ -1136,48 +1146,48 @@
                     if (parsed.numericValue >= 0 && !isFirstTerm) {
                         return `+ ${formatted}`;
                     } else if (parsed.numericValue < 0 && isXTerm && parsed.fractionalValue.denominator === 1) {
-                         // For negative integer x-terms, the sign is part of the formatted string, no extra space
+                         // Per i termini x interi negativi, il segno fa parte della stringa formattata, nessun spazio aggiuntivo
                         return formatted;
                     } else {
-                        // For negative numbers or negative fractional x-terms, the sign is part of the formatted string
+                        // Per i numeri negativi o i termini x frazionari negativi, il segno fa parte della stringa formattata
                         return formatted;
                     }
                 };
 
 
-                // Determine type of equation based on count
-                // Priority: Indeterminate > Impossible > Determined
-                if ((generationCount + 1) % 3 === 0) { // Indeterminate
+                // Determina il tipo di equazione in base al conteggio
+                // Priorità: Indeterminata > Impossibile > Determinata
+                if ((generationCount + 1) % 3 === 0) { // Indeterminata
                     do {
-                        a_coeff = generateRandomNonZeroCoefficient(); // Ensure 'a' is non-zero for 'x' to be present
-                    } while (false); // Loop only once as generateRandomNonZeroCoefficient ensures non-zero
-                    c_coeff = a_coeff; // Indeterminate: ax + b = ax + b
+                        a_coeff = generateRandomNonZeroCoefficient(); // Assicura che 'a' sia non zero per la presenza di 'x'
+                    } while (false); // Loopa solo una volta poiché generateRandomNonZeroCoefficient assicura non zero
+                    c_coeff = a_coeff; // Indeterminata: ax + b = ax + b
                     b_coeff = generateRandomCoefficient();
                     d_coeff = b_coeff;
 
                     eqString = `${getTermWithSign(a_coeff, true, true)} ${getTermWithSign(b_coeff, false)}`;
                     eqString += ` = ${getTermWithSign(c_coeff, true, true)} ${getTermWithSign(d_coeff, false)}`;
                     setMessage('Equazione Indeterminata generata. (Infinite soluzioni)');
-                } else if ((generationCount + 1) % 2 === 0) { // Impossible
+                } else if ((generationCount + 1) % 2 === 0) { // Impossibile
                     do {
-                        a_coeff = generateRandomNonZeroCoefficient(); // Ensure 'a' is non-zero for 'x' to be present
+                        a_coeff = generateRandomNonZeroCoefficient(); // Assicura che 'a' sia non zero per la presenza di 'x'
                     } while (false);
-                    c_coeff = a_coeff; // Impossible: ax + b = ax + d (b != d)
+                    c_coeff = a_coeff; // Impossibile: ax + b = ax + d (b != d)
                     b_coeff = generateRandomCoefficient();
                     d_coeff = generateRandomCoefficient();
-                    while (b_coeff === d_coeff) { // Ensure b != d
+                    while (b_coeff === d_coeff) { // Assicura che b != d
                         d_coeff = generateRandomCoefficient();
                     }
                     eqString = `${getTermWithSign(a_coeff, true, true)} ${getTermWithSign(b_coeff, false)}`;
                     eqString += ` = ${getTermWithSign(c_coeff, true, true)} ${getTermWithSign(d_coeff, false)}`;
                     setMessage('Equazione Impossibile generata. (Nessuna soluzione)');
-                } else { // Determined
+                } else { // Determinata
                     do {
                         a_coeff = generateRandomCoefficient();
                         c_coeff = generateRandomCoefficient();
                         const parsedA = parseFractionOrNumber(a_coeff);
                         const parsedC = parseFractionOrNumber(c_coeff);
-                        // Ensure a != c AND at least one of a or c is non-zero
+                        // Assicura che a != c E che almeno uno tra a o c sia non zero
                         if (Math.abs(parsedA.numericValue - parsedC.numericValue) > 1e-9 && (Math.abs(parsedA.numericValue) > 1e-9 || Math.abs(parsedC.numericValue) > 1e-9)) {
                             break;
                         }
@@ -1190,11 +1200,11 @@
                     setMessage('Equazione Determinata generata. (Una soluzione)');
                 }
 
-                // Clean up leading '+' signs if any and double spaces
+                // Pulisci i segni '+' iniziali se presenti e gli spazi doppi
                 eqString = eqString.replace(/^\+\s*/, '').replace(/=\s*\+\s*/, '= ').replace(/\s{2,}/g, ' ').trim();
 
-                setEquationInput(eqString); // Trim any extra spaces
-                // Clear the plates to force manual entry for the new equation
+                setEquationInput(eqString); // Rimuovi gli spazi extra
+                // Pulisci i piatti per forzare l'inserimento manuale per la nuova equazione
                 setLeftItems([]);
                 setRightItems([]);
                 setHistory([]);
@@ -1214,23 +1224,23 @@
                 setApplyPrincipleTerm('');
                 setRemoveItemInput('');
                 setSystemMessage(null);
-                setSolvedMessage(null); // Clear solved message
+                setSolvedMessage(null); // Pulisci il messaggio di risoluzione
                 setTilt(0);
-                setHistory([]); // Clear history when resetting completely
-                generateNewEquation(); // Generate a new equation
+                setHistory([]); // Pulisci la cronologia quando si resetta completamente
+                generateNewEquation(); // Genera una nuova equazione
             }, [saveState, setLeftItems, setRightItems, setAddNumberValue, setAddXTermValue, setOpOpValue, setApplyPrincipleTerm, setRemoveItemInput, setSystemMessage, setSolvedMessage, setTilt, setHistory, generateNewEquation]);
 
 
-            // --- Effect Hooks ---
+            // --- Hook per gli Effetti ---
 
-            // Initial generation on component mount
+            // Generazione iniziale al montaggio del componente
             useEffect(() => {
                 generateNewEquation();
-            }, []); // Empty dependency array means it runs once on mount
+            }, []); // L'array vuoto di dipendenze significa che viene eseguito una volta al montaggio
 
-            // Effect to re-evaluate balance status whenever items change
+            // Effetto per rivalutare lo stato della bilancia ogni volta che gli elementi cambiano
             useEffect(() => {
-                // Helper to get summed X and Number components for a given array of items
+                // Funzione di aiuto per ottenere i componenti X e Numerici sommati per un dato array di elementi
                 const getSummedComponentsLocal = (items) => {
                     let sumNumbersFractional = { numerator: 0, denominator: 1, sign: 1 };
                     let sumXFractional = { numerator: 0, denominator: 1, sign: 1 };
@@ -1251,7 +1261,7 @@
                 };
 
                 let newTilt;
-                let newMainMessage = ''; // This will store the message based on balance state
+                let newMainMessage = ''; // Questo memorizzerà il messaggio in base allo stato della bilancia
 
                 const leftComponents = getSummedComponentsLocal(leftItems);
                 const rightComponents = getSummedComponentsLocal(rightItems);
@@ -1270,7 +1280,7 @@
                     newTilt = 10;
                 }
 
-                // If plates are empty after operations, re-add zero item for display
+                // Se i piatti sono vuoti dopo le operazioni, riaggiungi l'elemento zero per la visualizzazione
                 if (leftItems.length === 0) {
                     setLeftItems([zeroItem]);
                 }
@@ -1278,12 +1288,12 @@
                     setRightItems([zeroItem]);
                 }
                 
-                // Only update the main message if there's no system message (error/warning)
-                // or if it's the initial load message.
-                // Otherwise, let the message set by generateNewEquation or other actions persist.
+                // Aggiorna il messaggio principale solo se non c'è un messaggio di sistema (errore/avviso)
+                // o se è il messaggio di caricamento iniziale.
+                // Altrimenti, lascia che il messaggio impostato da generateNewEquation o altre azioni persista.
                 if (systemMessage === null) {
-                    // Only update if the current message is a generic one, not an equation type message
-                    // or if it's the very first load.
+                    // Aggiorna solo se il messaggio attuale è generico, non un messaggio del tipo di equazione
+                    // o se è il primissimo caricamento.
                     if (message.includes('Benvenuto!') || message.includes('Bilancia azzerata!') || newMainMessage !== message) {
                         setMessage(newMainMessage);
                     }
@@ -1294,7 +1304,7 @@
                 if (beamRef.current) {
                     beamRef.current.style.setProperty('--current-tilt', `${newTilt}deg`);
 
-                    const shouldJiggle = (Math.abs(newTilt) > 0); // Always jiggle if not balanced
+                    const shouldJiggle = (Math.abs(newTilt) > 0); // Scuoti sempre se non è bilanciato
                     if (shouldJiggle) {
                         beamRef.current.classList.add('jiggle-animation');
                         const timer = setTimeout(() => {
@@ -1309,7 +1319,7 @@
                 }
             }, [leftItems, rightItems, systemMessage, setMessage, setTilt, zeroItem, message]);
 
-            // Effect to handle MathJax loading
+            // Effetto per gestire il caricamento di MathJax
             useEffect(() => {
                 const checkMathJax = () => {
                     if (window.MathJax && window.MathJax.startup && window.MathJax.startup.promise) {
@@ -1325,31 +1335,34 @@
             }, []);
 
 
-            // --- Render Logic ---
+            // --- Logica di rendering ---
 
-            // All controls are always enabled as the app is always in 'solving' mode
+            // Tutti i controlli sono sempre abilitati poiché l'app è sempre in modalità 'risoluzione'
             const areSolvingControlsEnabled = true;
 
 
             return (
-                <div className="min-h-screen bg-gradient-to-br from-gray-200 to-gray-400 flex flex-col items-center justify-center p-4 font-inter">
+                <div className="min-h-screen bg-gradient-to-br from-rose-50 to-rose-200 flex flex-col items-center justify-center p-4 font-inter">
                     <h1 className="text-4xl font-extrabold text-gray-800 mb-4 text-center drop-shadow-md">
                         Bilancia Algebrica con Equazione Assegnata
                     </h1>
 
-                    {/* Message Display (general status) */}
+                    {/* Visualizzazione dei messaggi (stato generale) */}
                     <div className="text-xl font-semibold text-gray-700 mb-6 p-3 bg-white rounded-lg shadow-md">
                         <MathJaxDisplay text={message} />
                     </div>
+                    <p className="text-sm text-black mb-6 text-center">
+                        La bilancia si inclina in modo che il lato con il "peso" simbolico maggiore si abbassi e il lato più leggero si alzi.
+                    </p>
 
-                    {/* System Message Display (for errors/critical feedback) */}
+                    {/* Visualizzazione dei messaggi di sistema (per errori/feedback critico) */}
                     {systemMessage && (
                         <div className="text-xl font-bold text-red-800 mb-6 p-4 bg-red-200 rounded-lg shadow-md text-center w-full max-w-4xl">
                             <MathJaxDisplay text={systemMessage} />
                         </div>
                     )}
 
-                    {/* Equation Input Section (for reference only) */}
+                    {/* Sezione di input dell'equazione (solo per riferimento) */}
                     <div className="control-section max-w-2xl">
                         <div className="flex items-center mb-3">
                             <h3 className="text-center text-xl font-bold text-gray-700 mr-2 whitespace-nowrap">
@@ -1358,11 +1371,11 @@
                             <input
                                 type="text"
                                 value={equationInput}
-                                readOnly // Make it read-only
-                                className="flex-1 p-2 border border-gray-300 rounded-md bg-gray-100 cursor-not-allowed"
+                                readOnly // Rendi di sola lettura
+                                className="flex-1 p-2 border border-rose-300 rounded-md bg-gray-100 cursor-not-allowed"
                             />
                         </div>
-                        <button onClick={generateNewEquation} className="w-full">
+                        <button onClick={generateNewEquation} className="w-full bg-rose-200 hover:bg-rose-300 text-black">
                             Genera Nuova Equazione
                         </button>
                         <p className="text-sm text-gray-600 mt-3 text-center">
@@ -1373,7 +1386,7 @@
                     <div className="balance-container">
                         <div className="pivot"></div>
                         <div className="pivot-base"></div>
-                        <div className="beam" ref={beamRef} style={{ transform: `rotate(${tilt}deg)` }}> {/* Ref for rotation */}
+                        <div className="beam" ref={beamRef} style={{ transform: `rotate(${tilt}deg)` }}> {/* Riferimento per la rotazione */}
                             <div className="plate-holder">
                                 <div className="plate">
                                     {leftItems.length > 0 ? (
@@ -1405,41 +1418,41 @@
                                 </div>
                             </div>
                         </div>
-                        {/* Solved Message Overlay */}
+                        {/* Sovrapposizione del messaggio di risoluzione */}
                         {solvedMessage && (
-                            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-green-600 text-black text-lg font-bold p-4 rounded-lg shadow-xl z-20 text-center">
+                            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-rose-200 text-black text-lg font-bold p-4 rounded-lg shadow-xl z-20 text-center">
                                 {solvedMessage}
                             </div>
                         )}
                     </div>
 
 
-                    <div className="flex flex-col gap-6 w-full max-w-6xl"> {/* Increased max-w for the whole control section area */}
-                        {/* Consolidated Add/Remove Items Section */}
+                    <div className="flex flex-col gap-6 w-full max-w-6xl">
+                        {/* Sezione consolidata per l'aggiunta/rimozione di elementi */}
                         {areSolvingControlsEnabled && (
-                            <div className="control-section max-w-6xl"> {/* Increased max-w for this specific section */}
-                                <h3>Aggiungi Elementi Manualmente</h3>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-4"> {/* Reduced horizontal gap */}
+                            <div className="control-section max-w-6xl">
+                                <h3 className="mb-4">Aggiungi Elementi Manualmente</h3>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-4">
                                     <div className="flex items-center justify-between gap-2">
                                         <span className="text-lg font-semibold text-gray-600 w-32 flex-shrink-0 whitespace-nowrap">Numero:</span>
-                                        <button onClick={() => handleAddNumber('left')} className="flex-initial w-28">
+                                        <button onClick={() => handleAddNumber('left')} className="flex-initial w-28 bg-rose-200 hover:bg-rose-300 text-black">
                                             Aggiungi Sinistra
                                         </button>
                                         <input
-                                            type="text" // Changed to text to allow fractions
+                                            type="text"
                                             placeholder="Es. 5, -3, 1/2"
                                             value={addNumberValue}
                                             onChange={(e) => setAddNumberValue(e.target.value)}
-                                            className="flex-1 p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400 mx-2"
+                                            className="flex-1 p-2 border border-rose-300 rounded-md focus:ring-2 focus:ring-rose-400 mx-2"
                                         />
-                                        <button onClick={() => handleAddNumber('right')} className="flex-initial w-28">
+                                        <button onClick={() => handleAddNumber('right')} className="flex-initial w-28 bg-rose-200 hover:bg-rose-300 text-black">
                                             Aggiungi Destra
                                         </button>
                                     </div>
 
                                     <div className="flex items-center justify-between gap-2">
                                         <span className="text-lg font-semibold text-gray-600 w-32 flex-shrink-0 whitespace-nowrap">Termine X:</span>
-                                        <button onClick={() => handleAddXTerm('left')} className="flex-initial w-28">
+                                        <button onClick={() => handleAddXTerm('left')} className="flex-initial w-28 bg-rose-200 hover:bg-rose-300 text-black">
                                             Aggiungi Sinistra
                                         </button>
                                         <input
@@ -1447,9 +1460,9 @@
                                             placeholder="Es. 2x, -x, (1/2)x, -(2/3)x"
                                             value={addXTermValue}
                                             onChange={(e) => setAddXTermValue(e.target.value)}
-                                            className="flex-1 p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400 mx-2"
+                                            className="flex-1 p-2 border border-rose-300 rounded-md focus:ring-2 focus:ring-rose-400 mx-2"
                                         />
-                                        <button onClick={() => handleAddXTerm('right')} className="flex-initial w-28">
+                                        <button onClick={() => handleAddXTerm('right')} className="flex-initial w-28 bg-rose-200 hover:bg-rose-300 text-black">
                                             Aggiungi Destra
                                         </button>
                                     </div>
@@ -1457,13 +1470,13 @@
                             </div>
                         )}
 
-                        {/* New section for removing specific items */}
+                        {/* Nuova sezione per la rimozione di elementi specifici */}
                         {areSolvingControlsEnabled && (
-                            <div className="control-section max-w-lg"> {/* Maintained max-w-lg for this section */}
-                                <h3>Rimuovi Elementi Specifici</h3>
+                            <div className="control-section max-w-lg">
+                                <h3 className="mb-4">Rimuovi Elementi Specifici</h3>
                                 <div className="flex items-center justify-between gap-2">
                                     <span className="text-lg font-semibold text-gray-600 w-32 flex-shrink-0 whitespace-nowrap">Rimuovi:</span>
-                                    <button onClick={() => handleRemoveItem('left')} className="flex-initial w-28">
+                                    <button onClick={() => handleRemoveItem('left')} className="flex-initial w-28 bg-rose-200 hover:bg-rose-300 text-black">
                                         Rimuovi Sinistra
                                     </button>
                                     <input
@@ -1471,22 +1484,19 @@
                                         placeholder="Es. 5, -3, 2x, -x, (1/2)x"
                                         value={removeItemInput}
                                         onChange={(e) => setRemoveItemInput(e.target.value)}
-                                        className="flex-1 p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400 mx-2"
+                                        className="flex-1 p-2 border border-rose-300 rounded-md focus:ring-2 focus:ring-rose-400 mx-2"
                                     />
-                                    <button onClick={() => handleRemoveItem('right')} className="flex-initial w-28">
+                                    <button onClick={() => handleRemoveItem('right')} className="flex-initial w-28 bg-rose-200 hover:bg-rose-300 text-black">
                                         Rimuovi Destra
                                     </button>
                                 </div>
-                                <p className="text-sm text-gray-600 mt-3">
-                                    Rimuove la prima occorrenza dell'elemento specificato.
-                                </p>
                             </div>
                         )}
 
-                        {/* New row for principle sections */}
+                        {/* Nuova riga per le sezioni dei principi */}
                         {areSolvingControlsEnabled && (
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                {/* Apply Addition/Subtraction Principle Section */}
+                                {/* Applica il Principio di Addizione/Sottrazione */}
                                 <div className="control-section">
                                     <h3>Applica il 1° Principio di Equivalenza delle Equazioni (Addizione/Sottrazione)</h3>
                                     <input
@@ -1494,9 +1504,9 @@
                                         placeholder="Termine da aggiungere (es. +5, -2x)"
                                         value={applyPrincipleTerm}
                                         onChange={(e) => setApplyPrincipleTerm(e.target.value)}
-                                        className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus://ring-blue-400 mb-3"
+                                        className="w-full p-2 border border-rose-300 rounded-md focus:ring-2 focus:ring-rose-400 mb-3"
                                     />
-                                    <button onClick={applyAdditionSubtractionPrinciple} className="w-full">
+                                    <button onClick={applyAdditionSubtractionPrinciple} className="w-full bg-rose-200 hover:bg-rose-300 text-black">
                                         Aggiungi questo termine a entrambi i lati
                                     </button>
                                     <p className="text-sm text-gray-600 mt-3">
@@ -1504,22 +1514,22 @@
                                     </p>
                                 </div>
 
-                                {/* Apply Operations Section (Moltiplicazione/Divisione) */}
+                                {/* Applica le operazioni (Moltiplicazione/Divisione) */}
                                 <div className="control-section">
                                     <h3>Applica il 2° Principio di Equivalenza delle Equazioni (Moltiplicazione/Divisione)</h3>
-                                    <div className="flex flex-col items-center gap-2"> {/* Use flex-col to stack input above buttons */}
+                                    <div className="flex flex-col items-center gap-2">
                                         <input
-                                            type="text" // Changed to text to allow fractions
+                                            type="text"
                                             placeholder="Valore (es. 2, 0.5, 1/2, -3/4)"
                                             value={opValue}
                                             onChange={(e) => setOpOpValue(e.target.value)}
-                                            className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400 mb-3"
+                                            className="w-full p-2 border border-rose-300 rounded-md focus:ring-2 focus:ring-rose-400 mb-3"
                                         />
                                         <div className="grid grid-cols-2 gap-3 w-full">
-                                            <button onClick={() => applyOperation('multiply')}>
+                                            <button onClick={() => applyOperation('multiply')} className="bg-rose-200 hover:bg-rose-300 text-black">
                                                 Moltiplica entrambi i lati
                                             </button>
-                                            <button onClick={() => applyOperation('divide')}>
+                                            <button onClick={() => applyOperation('divide')} className="bg-rose-200 hover:bg-rose-300 text-black">
                                                 Dividi entrambi i lati
                                             </button>
                                         </div>
@@ -1532,37 +1542,33 @@
                         )}
                     </div>
 
-                    {/* Global Action Buttons */}
-                    <div className="flex flex-wrap justify-center gap-4 mt-8 w-full max-w-full"> {/* Changed max-w to full */}
-                        <button onClick={handleRemoveOpposites} className="bg-orange-500 hover:bg-orange-600 text-black font-bold py-4 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105 flex-1 min-w-[180px]">
+                    {/* Pulsanti di azione globale */}
+                    <div className="flex flex-wrap justify-center gap-4 mt-8 w-full max-w-full">
+                        <button onClick={handleRemoveOpposites} className="bg-gradient-to-r from-rose-300 to-rose-400 hover:from-rose-400 hover:to-rose-500 text-black font-bold py-4 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105 flex-1 min-w-[180px]">
                             Elimina Coppie Opposte
                         </button>
-                        <button onClick={handleSumLikeTerms} className="bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-4 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105 flex-1 min-w-[180px]">
+                        <button onClick={handleSumLikeTerms} className="bg-gradient-to-r from-pink-400 to-rose-500 hover:from-pink-500 hover:to-rose-600 text-black font-bold py-4 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105 flex-1 min-w-[180px]">
                             Somma Algebrica di Monomi Simili
                         </button>
-                        {/* Reintroduced the "Calcola Moltiplicazione/Divisione" button */}
-                        <button onClick={calculateOperationResult} className="bg-purple-600 hover:bg-purple-700 text-black font-bold py-4 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105 flex-1 min-w-[180px]">
+                        <button onClick={calculateOperationResult} className="bg-gradient-to-r from-rose-300 to-pink-400 hover:from-rose-400 hover:to-pink-500 text-black font-bold py-4 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105 flex-1 min-w-[180px]">
                             Calcola Moltiplicazione/Divisione
                         </button>
-                        <button onClick={analyzeFinalEquation} className="bg-green-500 hover:bg-green-600 text-black font-bold py-4 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105 flex-1 min-w-[180px]">
+                        <button onClick={analyzeFinalEquation} className="bg-gradient-to-r from-rose-400 to-red-500 hover:from-rose-500 hover:to-red-600 text-black font-bold py-4 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105 flex-1 min-w-[180px]">
                             Analizza Soluzione Finale
                         </button>
-                        <button onClick={undoLastAction} className="bg-red-500 hover:bg-red-600 text-black font-bold py-4 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105 flex-1 min-w-[180px]" disabled={history.length === 0}>
+                        <button onClick={undoLastAction} className="bg-gradient-to-r from-red-400 to-rose-500 hover:from-red-500 hover:to-rose-600 text-black font-bold py-4 px-4 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105 flex-1 min-w-[180px]" disabled={history.length === 0}>
                             Annulla Ultima Azione
                         </button>
                     </div>
 
-                    <button onClick={clearAll} className="mt-4 bg-blue-800 hover:bg-blue-900 text-white font-bold py-3 px-6 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105">
+                    <button onClick={clearAll} className="mt-4 bg-gradient-to-r from-red-300 to-rose-400 hover:from-red-400 hover:to-rose-500 text-black font-bold py-3 px-6 rounded-lg shadow-md transition duration-300 ease-in-out transform hover:scale-105">
                         Azzera Bilancia
                     </button>
-                    <p className="text-sm text-gray-600 mt-3 text-center">
-                        Nota: La bilancia mostra l'uguaglianza simbolica delle espressioni. L'inclinazione indica che il piatto con il valore numerico totale più piccolo è più in basso.
-                    </p>
                 </div>
             );
         };
 
-        // Use window.onload to ensure all scripts and DOM are loaded
+        // Usa window.onload per assicurarti che tutti gli script e il DOM siano caricati
         window.onload = function() {
             if (window.ReactDOM) {
                 window.ReactDOM.createRoot(document.getElementById('root')).render(<App />);
