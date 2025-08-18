@@ -836,20 +836,20 @@
                 setSystemMessage(null);
             }, [saveState]);
 
-            const handleAddNumber = useCallback(() => {
+            // Funzione modificata per aggiungere un numero a un lato specifico
+            const handleAddNumber = useCallback((side) => {
                 const parsed = parseFractionOrNumber(addNumberValue);
                 if (parsed.error) {
                     setSystemMessage(parsed.error + '. Controlla che i valori frazionari siano scritti correttamente.');
                     return;
                 }
-                // Aggiungi a entrambi i lati per coerenza con il principio di equivalenza
-                addItemToSide('left', { ...parsed, type: 'number' });
-                addItemToSide('right', { ...parsed, type: 'number' });
+                addItemToSide(side, { ...parsed, type: 'number' });
                 setMessage('Numero aggiunto con successo.');
                 setAddNumberValue('');
             }, [addNumberValue, addItemToSide, setSystemMessage, setMessage, setAddNumberValue]);
 
-            const handleAddXTerm = useCallback(() => {
+            // Funzione modificata per aggiungere un termine X a un lato specifico
+            const handleAddXTerm = useCallback((side) => {
                 let inputString = addXTermValue.trim();
                 if (inputString === '') {
                     setSystemMessage('Per favor, inserisci un termine X (es. 2x, -x, (1/2)x, -(2/3)x).');
@@ -861,9 +861,7 @@
                         setSystemMessage('L\'input deve essere un termine X. Controlla il formato.');
                         return;
                     }
-                    // Aggiungi a entrambi i lati per coerenza con il principio di equivalenza
-                    addItemToSide('left', itemToAdd);
-                    addItemToSide('right', itemToAdd);
+                    addItemToSide(side, itemToAdd);
                     setMessage('Termine X aggiunto con successo.');
                     setAddXTermValue('');
                 } catch (error) {
